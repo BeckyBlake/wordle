@@ -31,15 +31,22 @@ current_word = 0
 def display_user_input():
     y = current_word*70 + 800/4 + 10
     font = pygame.font.Font(None, 50)
-    text = font.render(user_input, True, black)
-    # text_rect = text.get_rect(width/2, y)
-    screen.blit(text, (width/2, y))
+    for i in range(0, len(user_input)):
+        text = font.render(user_input[i], True, black)
+        screen.blit(text, (600/4 + i * 60 + 15, y))
+    # text = font.render(user_input, True, black)
+    # # text_rect = text.get_rect(width/2, y)
+    # screen.blit(text, (width/2, y))
 
 def display_guessed_words():
     for i in range(0, len(guessed_words)):
-        font = pygame.font.Font(None, 50)
-        text = font.render(guessed_words[i], True, black)
-        screen.blit(text, (width/2, i*70 + 800/4 + 10))
+        for j in range(0, len(guessed_words[i])):
+            font = pygame.font.Font(None, 50)
+            text = font.render(guessed_words[i][j], True, black)
+            screen.blit(text, (600/4 + j * 60 + 15, i*70 + 800/4 + 10))
+        # font = pygame.font.Font(None, 50)
+        # text = font.render(guessed_words[i], True, black)
+        # screen.blit(text, (width/2, i*70 + 800/4 + 10))
 
 
 user_input = ""
