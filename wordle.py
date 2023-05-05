@@ -1,6 +1,8 @@
 import pygame
-import time
 pygame.init()
+
+clock = pygame.time.Clock()
+
 
 # Set up the Pygame window
 width = 600
@@ -29,15 +31,29 @@ def set_up_boxes():
 
 def check_word():
     if len(user_input) < 5:
-        too_few_letters = pygame.font.Font(None, 30).render("Too few letters", True, black)
-        too_few_letters_rect = text.get_rect(center=(width/2, 180))
+        too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, black)
+        too_few_letters_rect = too_few_letters.get_rect(center=(width/2, 180))
         screen.blit(too_few_letters, too_few_letters_rect)
         pygame.display.flip()
-        time.sleep(2)
+        clock.tick(1)
         return 0
     elif user_input == answer:
         return 2
-    return 1
+    else:
+        # check it's in the words.txt file
+        with open("words.txt", "r") as f:
+            for line in f:
+                if line.strip() == user_input:
+                    return 1
+        not_a_word = pygame.font.Font(None, 30).render("Not a word", True, black)
+        # not_a_word.get_rect().center = (width/2, 180)
+        not_a_word_rect = not_a_word.get_rect(center=(width/2, 180))
+        screen.blit(not_a_word, not_a_word_rect)
+        pygame.display.flip()
+        clock.tick(1)
+        return 0
+
+    # return 1
 
 current_word = 0
 
@@ -60,6 +76,9 @@ def display_guessed_words():
         # font = pygame.font.Font(None, 50)
         # text = font.render(guessed_words[i], True, black)
         # screen.blit(text, (width/2, i*70 + 800/4 + 10))
+
+
+display_answer = 0    
 
 user_input = ""
 
@@ -97,9 +116,20 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
                 if check_word() == 1:
-                    current_word += 1
-                    guessed_words.append(user_input)
-                    user_input = ""
+                    if current_word == 5:
+                        display_answer = 1
+                        font = pygame.font.Font(None, 50)
+                        text = font.render(answer, True, black)
+                        text_rect = text.get_rect(center=(width/2, 150))
+                        rectangle = pygame.Rect(width/2, 100, 120, 50)
+                        rectangle.center = (width/2, 150)
+                        pygame.draw.rect(screen, black, rectangle, 2)
+                        screen.blit(text, text_rect)
+                        play_again_request()
+                    else:
+                        current_word += 1
+                        guessed_words.append(user_input)
+                        user_input = ""
                 elif check_word() == 2:
                     play_again_request()
             elif event.key == pygame.K_BACKSPACE:
@@ -124,6 +154,8 @@ while running:
     text = font.render("Wordle", True, black)
     text_rect = text.get_rect(center=(width/2, 50))
     screen.blit(text, text_rect)
+
+        
     
     # Update the display
     pygame.display.flip()
