@@ -1,4 +1,5 @@
 import pygame
+import time
 pygame.init()
 
 # Set up the Pygame window
@@ -13,6 +14,9 @@ guessed_words = []
 # define colors
 white = (255, 255, 255)
 black = (0, 0, 0)
+gray = (200, 200, 200)
+
+answer = "later"
 
 # set up boxes
 def set_up_boxes():
@@ -23,7 +27,16 @@ def set_up_boxes():
     # box = pygame.Rect(10, 10, 50, 60)
     # pygame.draw.rect(screen, black, box, 2)
 
-def check_valid_word():
+def check_word():
+    if len(user_input) < 5:
+        too_few_letters = pygame.font.Font(None, 30).render("Too few letters", True, black)
+        too_few_letters_rect = text.get_rect(center=(width/2, 180))
+        screen.blit(too_few_letters, too_few_letters_rect)
+        pygame.display.flip()
+        time.sleep(2)
+        return 0
+    elif user_input == answer:
+        return 2
     return 1
 
 current_word = 0
@@ -48,8 +61,33 @@ def display_guessed_words():
         # text = font.render(guessed_words[i], True, black)
         # screen.blit(text, (width/2, i*70 + 800/4 + 10))
 
-
 user_input = ""
+
+def play_again_request():
+    global user_input, current_word
+    rectangle = pygame.Rect(width/2, height/2, 350, 200)
+    rectangle.center = (width/2, height/2)
+    inner_rectangle = pygame.Rect(width/2, height/2, 280, 100)
+    inner_rectangle.center = (width/2, height/2)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                if inner_rectangle.collidepoint(mouse_pos):
+                    user_input = ""
+                    current_word = 0
+                    guessed_words.clear()
+                    return
+       
+        pygame.draw.rect(screen, gray, rectangle)
+        pygame.draw.rect(screen, white, inner_rectangle)
+        font = pygame.font.Font(None, 50)
+        text = font.render("Play again?", True, black)
+        text_rect = text.get_rect(center=(width/2, height/2))
+        screen.blit(text, text_rect)
+        pygame.display.flip()
 
 running = True
 while running:
@@ -58,10 +96,12 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
-                if check_valid_word() == 1:
+                if check_word() == 1:
                     current_word += 1
                     guessed_words.append(user_input)
                     user_input = ""
+                elif check_word() == 2:
+                    play_again_request()
             elif event.key == pygame.K_BACKSPACE:
                 if len(user_input) != 0:
                     user_input = user_input[:-1]
