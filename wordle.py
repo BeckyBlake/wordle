@@ -1,4 +1,6 @@
 import pygame
+import random
+import linecache
 pygame.init()
 
 clock = pygame.time.Clock()
@@ -20,17 +22,16 @@ gray = (200, 200, 200)
 green = (50, 168, 82)
 yellow = (207, 209, 105)
 
-answer = "later"
+answer = "xxxxx"
 
 
-# def set_answer():
-#     global answer
-#     with open("words.txt", "r") as fp:
-#         num_lines = len(fp.readlines())
-#         for line in f:
-#             if len(line.strip()) == 5:
-#                 answer = line.strip()
-#                 break
+def set_answer():
+    # print("hello")
+    global answer
+    file = open('words.txt')
+    content = file.readlines()
+    line_number = random.randint(0, len(content))
+    answer = content[line_number].strip()
 
 
 # set up boxes
@@ -136,6 +137,7 @@ def play_again_request():
                     user_input = ""
                     current_word = 0
                     guessed_words.clear()
+                    set_answer()
                     return
        
         pygame.draw.rect(screen, gray, rectangle)
@@ -146,6 +148,9 @@ def play_again_request():
         screen.blit(text, text_rect)
         pygame.display.flip()
 
+
+set_answer()
+print("answer is " + answer)
 running = True
 while running:
     for event in pygame.event.get():
