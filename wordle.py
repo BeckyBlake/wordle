@@ -80,7 +80,8 @@ def set_up_colored_boxes():
                 list[j] = 1
                 box = pygame.Rect(600/4 + j * 60, 800/4 + i * 70, 50, 60)
                 pygame.draw.rect(screen, green, box)
-            elif (guessed_words[i][j] != answer[j]):
+        for j in range(0, len(guessed_words[i])):
+            if (guessed_words[i][j] != answer[j]):
                 for k in range(0, len(answer)):
                     if (guessed_words[i][j] == answer[k] and list[k] == 0):
                         list[k] = 1
