@@ -1,6 +1,5 @@
 import pygame
 import random
-import linecache
 pygame.init()
 
 clock = pygame.time.Clock()
@@ -24,14 +23,21 @@ yellow = (207, 209, 105)
 
 answer = "xxxxx"
 
+wins = 0
+win_type = [0, 0, 0, 0, 0, 0]
+played = 0
+max_streak = 0
+current_streak = 0
+
 
 def set_answer():
     # print("hello")
     global answer
-    file = open('words.txt')
-    content = file.readlines()
-    line_number = random.randint(0, len(content))
-    answer = content[line_number].strip()
+    # file = open('words.txt')
+    # content = file.readlines()
+    # line_number = random.randint(0, len(content))
+    # answer = content[line_number].strip()
+    answer = "later"
 
 
 # set up boxes
@@ -40,8 +46,6 @@ def set_up_boxes():
         for j in range(0, 6):
             box = pygame.Rect(600/4 + i * 60, 800/4 + j * 70, 50, 60)
             pygame.draw.rect(screen, black, box, 2)
-    # box = pygame.Rect(10, 10, 50, 60)
-    # pygame.draw.rect(screen, black, box, 2)
 
 def check_word():
     if len(user_input) < 5:
@@ -67,7 +71,6 @@ def check_word():
         clock.tick(1)
         return 0
 
-    # return 1
 
 current_word = 0
 
@@ -90,13 +93,7 @@ def set_up_colored_boxes():
                 else:
                     box = pygame.Rect(600/4 + j * 60, 800/4 + i * 70, 50, 60)
                     pygame.draw.rect(screen, gray, box)
-            
-                
 
-    # for i in range(0, 5):
-    #     for j in range(0, 6):
-    #         box = pygame.Rect(600/4 + i * 60, 800/4 + j * 70, 50, 60)
-    #         pygame.draw.rect(screen, black, box, 2)
 
 def display_user_input():
     y = current_word*70 + 800/4 + 10
@@ -104,9 +101,6 @@ def display_user_input():
     for i in range(0, len(user_input)):
         text = font.render(user_input[i], True, black)
         screen.blit(text, (600/4 + i * 60 + 15, y))
-    # text = font.render(user_input, True, black)
-    # # text_rect = text.get_rect(width/2, y)
-    # screen.blit(text, (width/2, y))
 
 def display_guessed_words():
     for i in range(0, len(guessed_words)):
@@ -114,19 +108,20 @@ def display_guessed_words():
             font = pygame.font.Font(None, 50)
             text = font.render(guessed_words[i][j], True, white)
             screen.blit(text, (600/4 + j * 60 + 15, i*70 + 800/4 + 10))
-        # font = pygame.font.Font(None, 50)
-        # text = font.render(guessed_words[i], True, black)
-        # screen.blit(text, (width/2, i*70 + 800/4 + 10))
 
 
 user_input = ""
 
+exited_from_play_again = 0
+
 def play_again_request():
-    global user_input, current_word
-    rectangle = pygame.Rect(width/2, height/2, 350, 200)
+    global user_input, current_word, played, exited_from_play_again
+    played += 1
+    rectangle = pygame.Rect(width/2, height/2, 350, 400)
     rectangle.center = (width/2, height/2)
     inner_rectangle = pygame.Rect(width/2, height/2, 280, 100)
-    inner_rectangle.center = (width/2, height/2)
+    inner_rectangle.center = (width/2, height/2 + 120)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -139,18 +134,23 @@ def play_again_request():
                     guessed_words.clear()
                     set_answer()
                     return
+                elif exit_rect.collidepoint(mouse_pos):
+                    exited_from_play_again = 1
+                    return
        
         pygame.draw.rect(screen, gray, rectangle)
         pygame.draw.rect(screen, white, inner_rectangle)
         font = pygame.font.Font(None, 50)
         text = font.render("Play again?", True, black)
-        text_rect = text.get_rect(center=(width/2, height/2))
+        text_rect = text.get_rect(center=(width/2, height/2 + 120))
+        exit = font.render("x", True, black)
+        exit_rect = exit.get_rect(center=(width/2 + 150, height/2 - 180))
+        screen.blit(exit, exit_rect)
         screen.blit(text, text_rect)
         pygame.display.flip()
 
 
 set_answer()
-print("answer is " + answer)
 running = True
 while running:
     for event in pygame.event.get():
@@ -173,6 +173,8 @@ while running:
                         guessed_words.append(user_input)
                         user_input = ""
                 elif check_word() == 2:
+                    wins += 1
+                    win_type[current_word] += 1
                     current_word += 1
                     guessed_words.append(user_input)
                     user_input = ""
