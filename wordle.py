@@ -38,7 +38,7 @@ def set_answer():
 def set_up_boxes():
     for i in range(0, 5):
         for j in range(0, 6):
-            box = pygame.Rect(600/4 + i * 60, 800/4 + j * 70, 50, 60)
+            box = pygame.Rect(600/4 + i * 60, 800/6 + j * 70, 50, 60)
             pygame.draw.rect(screen, black, box, 2)
     # box = pygame.Rect(10, 10, 50, 60)
     # pygame.draw.rect(screen, black, box, 2)
@@ -46,10 +46,13 @@ def set_up_boxes():
 def check_word():
     if len(user_input) < 5:
         too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, black)
-        too_few_letters_rect = too_few_letters.get_rect(center=(width/2, 180))
+        too_few_letters_rect = too_few_letters.get_rect(center=(width/2, 110))
         screen.blit(too_few_letters, too_few_letters_rect)
         pygame.display.flip()
-        clock.tick(1)
+        # use pygame.time.set_timer() to set a timer for 4 seconds to display the message
+    
+        
+        clock.tick(2)
         return 0
     elif user_input == answer:
         return 2
@@ -61,7 +64,7 @@ def check_word():
                     return 1
         not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, black)
         # not_a_word.get_rect().center = (width/2, 180)
-        not_a_word_rect = not_a_word.get_rect(center=(width/2, 180))
+        not_a_word_rect = not_a_word.get_rect(center=(width/2, 110))
         screen.blit(not_a_word, not_a_word_rect)
         pygame.display.flip()
         clock.tick(1)
@@ -78,18 +81,18 @@ def set_up_colored_boxes():
         for j in range(0, len(guessed_words[i])):
             if (guessed_words[i][j] == answer[j]):
                 list[j] = 1
-                box = pygame.Rect(600/4 + j * 60, 800/4 + i * 70, 50, 60)
+                box = pygame.Rect(600/4 + j * 60, 800/6 + i * 70, 50, 60)
                 pygame.draw.rect(screen, green, box)
         for j in range(0, len(guessed_words[i])):
             if (guessed_words[i][j] != answer[j]):
                 for k in range(0, len(answer)):
                     if (guessed_words[i][j] == answer[k] and list[k] == 0):
                         list[k] = 1
-                        box = pygame.Rect(600/4 + j * 60, 800/4 + i * 70, 50, 60)
+                        box = pygame.Rect(600/4 + j * 60, 800/6 + i * 70, 50, 60)
                         pygame.draw.rect(screen, yellow, box)
                         break
                 else:
-                    box = pygame.Rect(600/4 + j * 60, 800/4 + i * 70, 50, 60)
+                    box = pygame.Rect(600/4 + j * 60, 800/6 + i * 70, 50, 60)
                     pygame.draw.rect(screen, gray, box)
             
                 
@@ -100,7 +103,7 @@ def set_up_colored_boxes():
     #         pygame.draw.rect(screen, black, box, 2)
 
 def display_user_input():
-    y = current_word*70 + 800/4 + 10
+    y = current_word*70 + 800/6 + 10
     font = pygame.font.Font(None, 50)
     for i in range(0, len(user_input)):
         text = font.render(user_input[i], True, black)
@@ -114,7 +117,7 @@ def display_guessed_words():
         for j in range(0, len(guessed_words[i])):
             font = pygame.font.Font(None, 50)
             text = font.render(guessed_words[i][j], True, white)
-            screen.blit(text, (600/4 + j * 60 + 15, i*70 + 800/4 + 10))
+            screen.blit(text, (600/4 + j * 60 + 15, i*70 + 800/6 + 10))
         # font = pygame.font.Font(None, 50)
         # text = font.render(guessed_words[i], True, black)
         # screen.blit(text, (width/2, i*70 + 800/4 + 10))
@@ -163,9 +166,9 @@ while running:
                     if current_word == 5:
                         font = pygame.font.Font(None, 50)
                         text = font.render(answer, True, black)
-                        text_rect = text.get_rect(center=(width/2, 150))
+                        text_rect = text.get_rect(center=(width/2, 100))
                         rectangle = pygame.Rect(width/2, 100, 120, 50)
-                        rectangle.center = (width/2, 150)
+                        rectangle.center = (width/2, 100)
                         pygame.draw.rect(screen, black, rectangle, 2)
                         screen.blit(text, text_rect)
                         play_again_request()
