@@ -186,10 +186,10 @@ def create_graph():
         # ax.text(value + 0.01, bar.get_y() + bar.get_height() / 2, str(value),
         #         ha='left', va='center', fontsize=11, color='red', fontweight='bold')
         ax.annotate(str(value), xy=(bar.get_width() / 2 - 0.015, bar.get_y() + bar.get_height() / 2),
-                xytext=(3, 0), textcoords='offset points', ha='left', va='center', fontsize=11, color='white')
+                xytext=(3, 0), textcoords='offset points', ha='left', va='center', fontsize=20, color='white')
 
         label = number_labels[i]
-        ax.text(0, bar.get_y() + bar.get_height() / 2, label, ha='right', va='center', fontsize=11)
+        ax.text(0, bar.get_y() + bar.get_height() / 2, label, ha='right', va='center', fontsize=20)
 
     ax.spines['left'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -205,13 +205,13 @@ def create_graph():
 
 
     fig.canvas.draw()
-    fig = pygame.transform.scale(fig, (640*3/4, 480*3/4))
+    fig = pygame.transform.scale(fig, (640*1/2, 480*1/2))
     return fig
 
 def display_stats(play_again_flag):
     global exited_from_play_again, wins, played, max_streak, current_streak, win_type, screen, user_input, current_word, guessed_words
-    rectangle = pygame.Rect(width/2, height/2, 350, 400)
-    rectangle.center = (width/2, height/2)
+    rectangle = pygame.Rect(width/2, height/2, 400, 430)
+    rectangle.center = (width/2, height * 1.1/2)
 
     win_percent = 0
     if played == 0:
@@ -219,7 +219,7 @@ def display_stats(play_again_flag):
     else:
         win_percent = wins/played * 100
 
-    inner_rectangle = pygame.Rect(width/2, height/2, 280, 100)
+    inner_rectangle = pygame.Rect(width/2, height/2, 190, 60)
     inner_rectangle.center = (width/2, height * 4/5)
 
     fig = create_graph()
@@ -247,15 +247,23 @@ def display_stats(play_again_flag):
                         exited_from_play_again = 1
                     return
         
-        pygame.draw.rect(screen, gray, rectangle)
+        pygame.draw.rect(screen, white, rectangle)
+        pygame.draw.rect(screen, gray, rectangle, 2)
         exit = font.render("x", True, black)
-        exit_rect = exit.get_rect(center=(width/2 + 150, height/2 - 180))
-        graph_rect = fig.get_rect(center=(width/2, height/2 + 40))
+        exit_rect = exit.get_rect(center=(width/2 + 180, height/2 - 160))
+        graph_rect = fig.get_rect(center=(width/2, height/2 + 70))
         screen.blit(exit, exit_rect)
-        screen.blit(fig, graph_rect)
+        if played != 0:
+            screen.blit(fig, graph_rect)
 
         if play_again_flag == 1:
-            pygame.draw.rect(screen, red, inner_rectangle)
+            pygame.draw.rect(screen, green, inner_rectangle)
+            # font = pygame.font.Font(None, 50)
+            smaller_font = pygame.font.Font(None, 40)
+            text = smaller_font.render("Play again?", True, white)
+            text_rect = text.get_rect(center=(width/2, height * 4/5))
+            screen.blit(text, text_rect)
+            
         pygame.display.flip()
         # pygame.display.update()
 
