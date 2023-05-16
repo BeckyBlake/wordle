@@ -176,7 +176,7 @@ def create_graph():
     bars = ax.barh(number_labels, win_type, align='center', color='gray')
 
     # Set a small height for bars with a value of 0
-    small_height = max(max(win_type) * 0.05, 0.05)
+    small_height = max(max(win_type) * 0.05, 0.1)
 
     # Add the values as text annotations inside the bars
     for i, bar in enumerate(bars):
@@ -185,8 +185,9 @@ def create_graph():
             bar.set_width(small_height)
         # ax.text(value + 0.01, bar.get_y() + bar.get_height() / 2, str(value),
         #         ha='left', va='center', fontsize=11, color='red', fontweight='bold')
-        ax.annotate(str(value), xy=(bar.get_width() / 2 - 0.015, bar.get_y() + bar.get_height() / 2),
-                xytext=(3, 0), textcoords='offset points', ha='left', va='center', fontsize=20, color='white')
+        print("bar width: ", bar.get_width())
+        ax.annotate(str(value), xy=(bar.get_width() / 2 - 0.025, bar.get_y() + bar.get_height() / 2),
+                xytext=(0, 0), textcoords='offset points', ha='left', va='center', fontsize=20, color='white')
 
         label = number_labels[i]
         ax.text(0, bar.get_y() + bar.get_height() / 2, label, ha='right', va='center', fontsize=20)
@@ -210,8 +211,24 @@ def create_graph():
 
 def display_stats(play_again_flag):
     global exited_from_play_again, wins, played, max_streak, current_streak, win_type, screen, user_input, current_word, guessed_words
-    rectangle = pygame.Rect(width/2, height/2, 400, 430)
-    rectangle.center = (width/2, height * 1.1/2)
+    if play_again_flag == 1:
+        rectangle = pygame.Rect(width/2, height/2, 400, 430)
+        rectangle.center = (width/2, height * 1.1/2)
+    else:
+        rectangle = pygame.Rect(width/2, height/2, 400, 400)
+        rectangle.center = (width/2, height / 2 + 10)
+    
+
+    if played == 0:
+        rectangle = pygame.Rect(width/2, height/2, 400, 280)
+        rectangle.center = (width/2, height /2 - 40)
+        no_data_font = pygame.font.Font(None, 25)
+        no_data_text = no_data_font.render("No data", True, black)
+        no_data_text_rect = no_data_text.get_rect(center=(width/2, height/2 + 50))
+        
+
+    pygame.draw.rect(screen, white, rectangle)
+    pygame.draw.rect(screen, gray, rectangle, 2)
 
     win_percent = 0
     if played == 0:
@@ -251,10 +268,17 @@ def display_stats(play_again_flag):
         pygame.draw.rect(screen, gray, rectangle, 2)
         exit = font.render("x", True, black)
         exit_rect = exit.get_rect(center=(width/2 + 180, height/2 - 160))
-        graph_rect = fig.get_rect(center=(width/2, height/2 + 70))
-        screen.blit(exit, exit_rect)
+        graph_rect = fig.get_rect(center=(width/2, height/2 + 85))
+        
         if played != 0:
             screen.blit(fig, graph_rect)
+
+        even_smaller_font = pygame.font.Font(None, 25)
+        text2 = even_smaller_font.render("GUESS DISTRIBUTION", True, black)
+        text2_rect = text2.get_rect(center=(width/2, height/2 - 10))
+
+        text3 = even_smaller_font.render("STATISTICS", True, black)
+        text3_rect = text3.get_rect(center=(width/2, height/3 - 40))
 
         if play_again_flag == 1:
             pygame.draw.rect(screen, green, inner_rectangle)
@@ -263,6 +287,12 @@ def display_stats(play_again_flag):
             text = smaller_font.render("Play again?", True, white)
             text_rect = text.get_rect(center=(width/2, height * 4/5))
             screen.blit(text, text_rect)
+    
+        screen.blit(exit, exit_rect)
+        screen.blit(text2, text2_rect)
+        screen.blit(text3, text3_rect)
+        if played == 0:
+            screen.blit(no_data_text, no_data_text_rect)
             
         pygame.display.flip()
         # pygame.display.update()
@@ -328,7 +358,7 @@ while running:
     text = font.render("Wordle", True, black)
     text_rect = text.get_rect(center=(width/2, 50))
     screen.blit(text, text_rect)
-    stat_img_rect = stat_img.get_rect(center=(width*3/4, height/6))
+    stat_img_rect = stat_img.get_rect(center=(width*3/4, 50))
     screen.blit(stat_img, stat_img_rect)
 
         
