@@ -100,36 +100,36 @@ def set_up_colored_boxes():
         for j in range(0, len(guessed_words[i])):
             if (guessed_words[i][j] == answer[j]):
                 list[j] = 1
-                box = pygame.Rect(600/4 + j * 60, 800/6 + i * 70, 50, 60)
+                box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
                 pygame.draw.rect(screen, green, box)
         for j in range(0, len(guessed_words[i])):
             if (guessed_words[i][j] != answer[j]):
                 for k in range(0, len(answer)):
                     if (guessed_words[i][j] == answer[k] and list[k] == 0):
                         list[k] = 1
-                        box = pygame.Rect(600/4 + j * 60, 800/6 + i * 70, 50, 60)
+                        box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
                         pygame.draw.rect(screen, yellow, box)
                         break
                 else:
-                    box = pygame.Rect(600/4 + j * 60, 800/6 + i * 70, 50, 60)
+                    box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
                     pygame.draw.rect(screen, gray, box)
 
 
 def display_user_input():
     if exited_from_play_again == 1:
         return
-    y = current_word*70 + 800/4 + 10
+    y = current_word*70 + 800/6 + 10
     font = pygame.font.Font(None, 50)
     for i in range(0, len(user_input)):
         text = font.render(user_input[i], True, black)
-        screen.blit(text, (600/4 + i * 60 + 15, y))
+        screen.blit(text, (600/4 + i * 65 + 15, y))
 
 def display_guessed_words():
     for i in range(0, len(guessed_words)):
         for j in range(0, len(guessed_words[i])):
             font = pygame.font.Font(None, 50)
             text = font.render(guessed_words[i][j], True, white)
-            screen.blit(text, (600/4 + j * 60 + 15, i*70 + 800/6 + 10))
+            screen.blit(text, (600/4 + j * 66 + 15, i*70 + 800/6 + 10))
         # font = pygame.font.Font(None, 50)
         # text = font.render(guessed_words[i], True, black)
         # screen.blit(text, (width/2, i*70 + 800/4 + 10))
