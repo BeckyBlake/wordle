@@ -7,13 +7,12 @@ import numpy as np
 pygame.init()
 
 
-
 clock = pygame.time.Clock()
 
 
 # Set up the Pygame window
 width = 600
-height = 700
+height = 800
 window_size = (width, height)
 screen = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Wordle")
@@ -25,8 +24,9 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 gray = (200, 200, 200)
 green = (50, 168, 82)
-yellow = (207, 209, 105)
+yellow = (204, 183, 78)
 red = (255, 0, 0)
+dark_gray = (100, 100, 100)
 
 answer = "xxxxx"
 
@@ -91,7 +91,23 @@ def check_word():
         return 0
 
 
+
 current_word = 0
+
+def set_up_keyboard():
+    for i in range(0, 10):
+        box = pygame.Rect(600/8 + 15 + i * 45, 800*3/4, 40, 50)
+        pygame.draw.rect(screen, gray, box, 0, 5)
+    for i in range(0, 9):
+        box = pygame.Rect(600/6 + 10 + i * 45, 800*3/4 + 55, 40, 50)
+        pygame.draw.rect(screen, gray, box, 0, 5)
+    for i in range(0, 7):
+        box = pygame.Rect(600/4 + 5 + i * 45, 800*3/4 + 110, 40, 50)
+        pygame.draw.rect(screen, gray, box, 0, 5)
+    enter = pygame.Rect(600/10 + 20, 800*3/4 + 110, 70, 50)
+    pygame.draw.rect(screen, gray, enter, 0, 5)
+    backspace = pygame.Rect(600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50)
+    pygame.draw.rect(screen, gray, backspace, 0, 5)
 
 def set_up_colored_boxes():
     global answer
@@ -112,7 +128,7 @@ def set_up_colored_boxes():
                         break
                 else:
                     box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
-                    pygame.draw.rect(screen, gray, box)
+                    pygame.draw.rect(screen, dark_gray, box)
 
 
 def display_user_input():
@@ -362,6 +378,8 @@ while running:
     screen.fill(white)
     
     set_up_boxes()
+
+    set_up_keyboard()
 
     set_up_colored_boxes()
 
