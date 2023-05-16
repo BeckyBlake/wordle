@@ -121,15 +121,18 @@ def display_user_input():
     y = current_word*70 + 800/6 + 15
     font = pygame.font.Font(None, 50)
     for i in range(0, len(user_input)):
-        text = font.render(user_input[i], True, black)
-        screen.blit(text, (600/4 + i * 65 + 20, y))
+        text = font.render(user_input[i].upper(), True, black)
+        text_rect = text.get_rect(center=(600/4 + i * 65 + 30, 800/6 + current_word * 70 + 35))
+        screen.blit(text, text_rect)
 
 def display_guessed_words():
     for i in range(0, len(guessed_words)):
         for j in range(0, len(guessed_words[i])):
             font = pygame.font.Font(None, 50)
-            text = font.render(guessed_words[i][j], True, white)
-            screen.blit(text, (600/4 + j * 65 + 20, i*70 + 800/6 + 15))
+            text = font.render(guessed_words[i][j].upper(), True, white)
+            # box = pygame.Rect(600/4 + i * 65, 800/6 + j * 70, 60, 60)
+            text_rect = text.get_rect(center=(600/4 + j * 65 + 30, 800/6 + i * 70 + 35))
+            screen.blit(text, text_rect)
         # font = pygame.font.Font(None, 50)
         # text = font.render(guessed_words[i], True, black)
         # screen.blit(text, (width/2, i*70 + 800/4 + 10))
@@ -141,38 +144,6 @@ def play_again_request():
     global user_input, current_word, played, exited_from_play_again
     played += 1
     display_stats(1)
-    # rectangle = pygame.Rect(width/2, height/2, 350, 400)
-    # rectangle.center = (width/2, height/2)
-    # inner_rectangle = pygame.Rect(width/2, height/2, 280, 100)
-    # inner_rectangle.center = (width/2, height/2 + 120)
-
-
-    # while True:
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             pygame.quit()
-    #         if event.type == pygame.MOUSEBUTTONDOWN:
-    #             mouse_pos = event.pos
-    #             if inner_rectangle.collidepoint(mouse_pos):
-    #                 user_input = ""
-    #                 current_word = 0
-    #                 guessed_words.clear()
-    #                 set_answer()
-    #                 return
-    #             elif exit_rect.collidepoint(mouse_pos):
-    #                 exited_from_play_again = 1
-    #                 return
-       
-    #     pygame.draw.rect(screen, gray, rectangle)
-    #     pygame.draw.rect(screen, white, inner_rectangle)
-    #     font = pygame.font.Font(None, 50)
-    #     text = font.render("Play again?", True, black)
-    #     text_rect = text.get_rect(center=(width/2, height/2 + 120))
-    #     exit = font.render("x", True, black)
-    #     exit_rect = exit.get_rect(center=(width/2 + 150, height/2 - 180))
-    #     screen.blit(exit, exit_rect)
-    #     screen.blit(text, text_rect)
-    #     pygame.display.flip()
 
 def create_graph():
     plt.rcdefaults()
@@ -350,11 +321,11 @@ while running:
                         # loss
                         current_streak = 0 # :( so sad
                         font = pygame.font.Font(None, 50)
-                        text = font.render(answer, True, black)
-                        text_rect = text.get_rect(center=(width/2, 100))
+                        text = font.render(answer, True, white)
+                        text_rect = text.get_rect(center=(width/2, 130))
                         rectangle = pygame.Rect(width/2, 100, 120, 50)
-                        rectangle.center = (width/2, 100)
-                        pygame.draw.rect(screen, black, rectangle, 2)
+                        rectangle.center = (width/2, 130)
+                        pygame.draw.rect(screen, black, rectangle, 0, 3)
                         screen.blit(text, text_rect)
                         play_again_request()
                     else:
