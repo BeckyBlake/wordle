@@ -118,18 +118,18 @@ def set_up_colored_boxes():
 def display_user_input():
     if exited_from_play_again == 1:
         return
-    y = current_word*70 + 800/6 + 10
+    y = current_word*70 + 800/6 + 15
     font = pygame.font.Font(None, 50)
     for i in range(0, len(user_input)):
         text = font.render(user_input[i], True, black)
-        screen.blit(text, (600/4 + i * 65 + 15, y))
+        screen.blit(text, (600/4 + i * 65 + 20, y))
 
 def display_guessed_words():
     for i in range(0, len(guessed_words)):
         for j in range(0, len(guessed_words[i])):
             font = pygame.font.Font(None, 50)
             text = font.render(guessed_words[i][j], True, white)
-            screen.blit(text, (600/4 + j * 66 + 15, i*70 + 800/6 + 10))
+            screen.blit(text, (600/4 + j * 65 + 20, i*70 + 800/6 + 15))
         # font = pygame.font.Font(None, 50)
         # text = font.render(guessed_words[i], True, black)
         # screen.blit(text, (width/2, i*70 + 800/4 + 10))
