@@ -38,8 +38,8 @@ def set_answer():
 def set_up_boxes():
     for i in range(0, 5):
         for j in range(0, 6):
-            box = pygame.Rect(600/4 + i * 60, 800/6 + j * 70, 50, 60)
-            pygame.draw.rect(screen, black, box, 2)
+            box = pygame.Rect(600/4 + i * 65, 800/6 + j * 70, 60, 60)
+            pygame.draw.rect(screen, gray, box, 2)
     # box = pygame.Rect(10, 10, 50, 60)
     # pygame.draw.rect(screen, black, box, 2)
 
