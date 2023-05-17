@@ -102,31 +102,45 @@ top_row = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p']
 middle_row = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l']
 bottom_row = ['z', 'x', 'c', 'v', 'b', 'n', 'm']
 
+top_row_keys = []
+middle_row_keys = []
+bottom_row_keys = []
+
+enter = pygame.Rect(600/10 + 20, 800*3/4 + 110, 70, 50)
+backspace = pygame.Rect(600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50)
+
 def set_up_keyboard():
+    # global top_row_keys, middle_row_keys, bottom_row_keys, enter, backspace
     for i in range(0, 10):
         box = pygame.Rect(600/8 + 15 + i * 45, 800*3/4, 40, 50)
+        if len(top_row_keys) < 10:
+            top_row_keys.append(box)
         pygame.draw.rect(screen, gray, box, 0, 5)
         letter = pygame.font.Font(None, 30).render(top_row[i].upper(), True, black)
         letter_rect = letter.get_rect(center=(600/8 + 15 + i * 45 + 20, 800*3/4 + 25))
         screen.blit(letter, letter_rect)
     for i in range(0, 9):
         box = pygame.Rect(600/6 + 10 + i * 45, 800*3/4 + 55, 40, 50)
+        if len(middle_row_keys) < 9:
+            middle_row_keys.append(box)
         pygame.draw.rect(screen, gray, box, 0, 5)
         letter = pygame.font.Font(None, 30).render(middle_row[i].upper(), True, black)
         letter_rect = letter.get_rect(center=(600/6 + 10 + i * 45 + 20, 800*3/4 + 55 + 25))
         screen.blit(letter, letter_rect)
     for i in range(0, 7):
         box = pygame.Rect(600/4 + 5 + i * 45, 800*3/4 + 110, 40, 50)
+        if len(bottom_row_keys) < 7:
+            bottom_row_keys.append(box)
         pygame.draw.rect(screen, gray, box, 0, 5)
         letter = pygame.font.Font(None, 30).render(bottom_row[i].upper(), True, black)
         letter_rect = letter.get_rect(center=(600/4 + 5 + i * 45 + 20, 800*3/4 + 110 + 25))
         screen.blit(letter, letter_rect)
-    enter = pygame.Rect(600/10 + 20, 800*3/4 + 110, 70, 50)
+    
     pygame.draw.rect(screen, gray, enter, 0, 5)
     enter_text = pygame.font.Font(None, 25).render("ENTER", True, black)
     enter_text_rect = enter_text.get_rect(center=(600/10 + 20 + 35, 800*3/4 + 110 + 25))
     screen.blit(enter_text, enter_text_rect)
-    backspace = pygame.Rect(600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50)
+    
     pygame.draw.rect(screen, gray, backspace, 0, 5)
     back_img_rect = back_img.get_rect(center=(600/4 + 90*4 - 40 + 35, 800*3/4 + 110 + 25))
     screen.blit(back_img, back_img_rect)
@@ -349,6 +363,37 @@ def display_stats(play_again_flag):
         pygame.display.flip()
         # pygame.display.update()
 
+def return_key_pressed():
+    global user_input, wins, current_word, current_streak, max_streak, played, guessed_words, win_type, play_again_flag, exited_from_play_again
+    if check_word() == 1:
+        if current_word == 5:
+            # loss
+            current_streak = 0 # :( so sad
+            font = pygame.font.Font(None, 50)
+            text = font.render(answer, True, white)
+            text_rect = text.get_rect(center=(width/2, 130))
+            rectangle = pygame.Rect(width/2, 100, 120, 50)
+            rectangle.center = (width/2, 130)
+            pygame.draw.rect(screen, black, rectangle, 0, 3)
+            screen.blit(text, text_rect)
+            play_again_request()
+        else:
+            current_word += 1
+            guessed_words.append(user_input)
+            user_input = ""
+    elif check_word() == 2:
+        wins += 1
+        win_type[current_word] += 1
+        current_word += 1
+        current_streak += 1
+        if current_streak > max_streak:
+            max_streak = current_streak
+        guessed_words.append(user_input)
+        user_input = ""
+        set_up_colored_boxes()
+        display_guessed_words()
+        play_again_request()
+
 set_answer()
 running = True
 while running:
@@ -357,34 +402,7 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
-                if check_word() == 1:
-                    if current_word == 5:
-                        # loss
-                        current_streak = 0 # :( so sad
-                        font = pygame.font.Font(None, 50)
-                        text = font.render(answer, True, white)
-                        text_rect = text.get_rect(center=(width/2, 130))
-                        rectangle = pygame.Rect(width/2, 100, 120, 50)
-                        rectangle.center = (width/2, 130)
-                        pygame.draw.rect(screen, black, rectangle, 0, 3)
-                        screen.blit(text, text_rect)
-                        play_again_request()
-                    else:
-                        current_word += 1
-                        guessed_words.append(user_input)
-                        user_input = ""
-                elif check_word() == 2:
-                    wins += 1
-                    win_type[current_word] += 1
-                    current_word += 1
-                    current_streak += 1
-                    if current_streak > max_streak:
-                        max_streak = current_streak
-                    guessed_words.append(user_input)
-                    user_input = ""
-                    set_up_colored_boxes()
-                    display_guessed_words()
-                    play_again_request()
+                return_key_pressed()
             elif event.key == pygame.K_BACKSPACE:
                 if len(user_input) != 0:
                     user_input = user_input[:-1]
@@ -398,15 +416,33 @@ while running:
                     display_stats(1)
                 else:
                     display_stats(0)
+            else:
+                for i in range(len(top_row_keys)):
+                    if top_row_keys[i].collidepoint(event.pos):
+                        if len(user_input) != 5:
+                            user_input += top_row[i]
+                for i in range(len(middle_row_keys)):
+                    if middle_row_keys[i].collidepoint(event.pos):
+                        if len(user_input) != 5:
+                            user_input += middle_row[i]
+                for i in range(len(bottom_row_keys)):
+                    if bottom_row_keys[i].collidepoint(event.pos):
+                        if len(user_input) != 5:
+                            user_input += bottom_row[i]
+                if backspace.collidepoint(event.pos):
+                    if len(user_input) != 0:
+                        user_input = user_input[:-1]
+                if enter.collidepoint(event.pos):
+                    return_key_pressed()
 
     # Clear the screen
     screen.fill(white)
     
     set_up_boxes()
 
-    set_up_keyboard()
-
     set_up_colored_boxes()
+
+    set_up_keyboard()
 
     display_guessed_words()
 
