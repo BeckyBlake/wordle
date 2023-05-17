@@ -46,10 +46,11 @@ stat_img = pygame.transform.scale(stat_img, (50, 50))
 def set_answer():
     # print("hello")
     global answer, exited_from_play_again
-    file = open('words.txt')
-    content = file.readlines()
-    line_number = random.randint(0, len(content))
-    answer = content[line_number].strip()
+    # file = open('words.txt')
+    # content = file.readlines()
+    # line_number = random.randint(0, len(content))
+    # answer = content[line_number].strip()
+    answer = "later"
     # we know for a fact a new game has started so...
     exited_from_play_again = 0
 
@@ -207,11 +208,11 @@ def create_graph():
 def display_stats(play_again_flag):
     global exited_from_play_again, wins, played, max_streak, current_streak, win_type, screen, user_input, current_word, guessed_words
     if play_again_flag == 1:
-        rectangle = pygame.Rect(width/2, height/2, 400, 430)
-        rectangle.center = (width/2, height * 1.1/2)
+        rectangle = pygame.Rect(width/2, height/2 - 20, 400, 430)
+        rectangle.center = (width/2, height * 1.1/2 - 20)
     else:
-        rectangle = pygame.Rect(width/2, height/2, 400, 400)
-        rectangle.center = (width/2, height / 2 + 10)
+        rectangle = pygame.Rect(width/2, height/2 - 20, 400, 390)
+        rectangle.center = (width/2, height / 2)
 
 
     win_percent = 0
@@ -224,29 +225,29 @@ def display_stats(play_again_flag):
     really_small_font = pygame.font.Font(None, 20)
 
     win_percentage = really_big_font.render(str(win_percent), True, black)
-    win_rect = win_percentage.get_rect(center=(width*4/9, height/2 - 110))
+    win_rect = win_percentage.get_rect(center=(width*4/9, height/2 - 130))
     win_perc = really_small_font.render("Win %", True, black)
-    win_perc_rect = win_perc.get_rect(center=(width*4/9, height/2 - 80))
+    win_perc_rect = win_perc.get_rect(center=(width*4/9, height/2 - 100))
 
     cur_streak = really_big_font.render(str(current_streak), True, black)
-    cur_streak_rect = cur_streak.get_rect(center=(width*5/9, height/2 - 110))
+    cur_streak_rect = cur_streak.get_rect(center=(width*5/9, height/2 - 130))
     cur_streak_text = really_small_font.render("Current\nStreak", True, black)
-    cur_streak_text_rect = cur_streak_text.get_rect(center=(width*5/9, height/2 - 72))
+    cur_streak_text_rect = cur_streak_text.get_rect(center=(width*5/9, height/2 - 92))
 
     max_streak_text = really_big_font.render(str(max_streak), True, black)
-    max_streak_rect = max_streak_text.get_rect(center=(width*6/9, height/2 - 110))
+    max_streak_rect = max_streak_text.get_rect(center=(width*6/9, height/2 - 130))
     max_streak_small_text = really_small_font.render("Max\nStreak", True, black)
-    max_streak_small_rect = max_streak_small_text.get_rect(center=(width*6/9, height/2 - 72))
+    max_streak_small_rect = max_streak_small_text.get_rect(center=(width*6/9, height/2 - 92))
 
     played_text = really_big_font.render(str(played), True, black)
-    played_rect = played_text.get_rect(center=(width*3/9, height/2 - 110))
+    played_rect = played_text.get_rect(center=(width*3/9, height/2 - 130))
     played_small_text = really_small_font.render("Played", True, black)
-    played_small_rect = played_small_text.get_rect(center=(width*3/9, height/2 - 80))
+    played_small_rect = played_small_text.get_rect(center=(width*3/9, height/2 - 100))
     
 
     if played == 0:
-        rectangle = pygame.Rect(width/2, height/2, 400, 280)
-        rectangle.center = (width/2, height /2 - 40)
+        rectangle = pygame.Rect(width/2, height/2 - 20, 400, 280)
+        rectangle.center = (width/2, height /2 - 60)
         no_data_font = pygame.font.Font(None, 25)
         no_data_text = no_data_font.render("No data", True, black)
         no_data_text_rect = no_data_text.get_rect(center=(width/2, height/2 + 50))
@@ -255,8 +256,8 @@ def display_stats(play_again_flag):
     pygame.draw.rect(screen, white, rectangle)
     pygame.draw.rect(screen, gray, rectangle, 2)
 
-    inner_rectangle = pygame.Rect(width/2, height/2, 190, 60)
-    inner_rectangle.center = (width/2, height * 4/5)
+    inner_rectangle = pygame.Rect(width/2, height/2 - 20, 190, 60)
+    inner_rectangle.center = (width/2, height * 4/5 - 40)
 
     fig = create_graph()
     
@@ -285,16 +286,16 @@ def display_stats(play_again_flag):
         
         pygame.draw.rect(screen, white, rectangle)
         pygame.draw.rect(screen, gray, rectangle, 2)
-        exit = font.render("x", True, black)
-        exit_rect = exit.get_rect(center=(width/2 + 180, height/2 - 160))
-        graph_rect = fig.get_rect(center=(width/2, height/2 + 85))
+        exit = font.render("x", True, dark_gray)
+        exit_rect = exit.get_rect(center=(width/2 + 180, height/2 - 180))
+        graph_rect = fig.get_rect(center=(width/2, height/2 + 65))
         
         if played != 0:
             screen.blit(fig, graph_rect)
 
         even_smaller_font = pygame.font.Font(None, 25)
         text2 = even_smaller_font.render("GUESS DISTRIBUTION", True, black)
-        text2_rect = text2.get_rect(center=(width/2, height/2 - 10))
+        text2_rect = text2.get_rect(center=(width/2, height/2 - 30))
 
         text3 = even_smaller_font.render("STATISTICS", True, black)
         text3_rect = text3.get_rect(center=(width/2, height/3 - 40))
@@ -304,7 +305,7 @@ def display_stats(play_again_flag):
             # font = pygame.font.Font(None, 50)
             smaller_font = pygame.font.Font(None, 40)
             text = smaller_font.render("Play again?", True, white)
-            text_rect = text.get_rect(center=(width/2, height * 4/5))
+            text_rect = text.get_rect(center=(width/2, height * 4/5 - 40))
             screen.blit(text, text_rect)
     
         screen.blit(exit, exit_rect)
