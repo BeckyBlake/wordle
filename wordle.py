@@ -41,6 +41,9 @@ exited_from_play_again = 0
 stat_img = pygame.image.load("stats.png").convert()
 stat_img = pygame.transform.scale(stat_img, (50, 50))
 
+back_img = pygame.image.load("back.png").convert_alpha()
+back_img = pygame.transform.scale(back_img, (35, 35))
+
 
 
 def set_answer():
@@ -95,20 +98,41 @@ def check_word():
 
 current_word = 0
 
+top_row = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p']
+middle_row = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l']
+bottom_row = ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+
 def set_up_keyboard():
     for i in range(0, 10):
         box = pygame.Rect(600/8 + 15 + i * 45, 800*3/4, 40, 50)
         pygame.draw.rect(screen, gray, box, 0, 5)
+        letter = pygame.font.Font(None, 30).render(top_row[i].upper(), True, black)
+        letter_rect = letter.get_rect(center=(600/8 + 15 + i * 45 + 20, 800*3/4 + 25))
+        screen.blit(letter, letter_rect)
     for i in range(0, 9):
         box = pygame.Rect(600/6 + 10 + i * 45, 800*3/4 + 55, 40, 50)
         pygame.draw.rect(screen, gray, box, 0, 5)
+        letter = pygame.font.Font(None, 30).render(middle_row[i].upper(), True, black)
+        letter_rect = letter.get_rect(center=(600/6 + 10 + i * 45 + 20, 800*3/4 + 55 + 25))
+        screen.blit(letter, letter_rect)
     for i in range(0, 7):
         box = pygame.Rect(600/4 + 5 + i * 45, 800*3/4 + 110, 40, 50)
         pygame.draw.rect(screen, gray, box, 0, 5)
+        letter = pygame.font.Font(None, 30).render(bottom_row[i].upper(), True, black)
+        letter_rect = letter.get_rect(center=(600/4 + 5 + i * 45 + 20, 800*3/4 + 110 + 25))
+        screen.blit(letter, letter_rect)
     enter = pygame.Rect(600/10 + 20, 800*3/4 + 110, 70, 50)
     pygame.draw.rect(screen, gray, enter, 0, 5)
+    enter_text = pygame.font.Font(None, 25).render("ENTER", True, black)
+    enter_text_rect = enter_text.get_rect(center=(600/10 + 20 + 35, 800*3/4 + 110 + 25))
+    screen.blit(enter_text, enter_text_rect)
     backspace = pygame.Rect(600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50)
     pygame.draw.rect(screen, gray, backspace, 0, 5)
+    back_img_rect = back_img.get_rect(center=(600/4 + 90*4 - 40 + 35, 800*3/4 + 110 + 25))
+    screen.blit(back_img, back_img_rect)
+
+
+
 
 def set_up_colored_boxes():
     global answer
@@ -257,7 +281,7 @@ def display_stats(play_again_flag):
     pygame.draw.rect(screen, gray, rectangle, 2)
 
     inner_rectangle = pygame.Rect(width/2, height/2 - 20, 190, 60)
-    inner_rectangle.center = (width/2, height * 4/5 - 40)
+    inner_rectangle.center = (width/2, height * 4/5 - 45)
 
     fig = create_graph()
     
@@ -305,7 +329,7 @@ def display_stats(play_again_flag):
             # font = pygame.font.Font(None, 50)
             smaller_font = pygame.font.Font(None, 40)
             text = smaller_font.render("Play again?", True, white)
-            text_rect = text.get_rect(center=(width/2, height * 4/5 - 40))
+            text_rect = text.get_rect(center=(width/2, height * 4/5 - 45))
             screen.blit(text, text_rect)
     
         screen.blit(exit, exit_rect)
