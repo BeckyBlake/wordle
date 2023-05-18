@@ -49,11 +49,11 @@ back_img = pygame.transform.scale(back_img, (35, 35))
 def set_answer():
     # print("hello")
     global answer, exited_from_play_again
-    # file = open('words.txt')
-    # content = file.readlines()
-    # line_number = random.randint(0, len(content))
-    # answer = content[line_number].strip()
-    answer = "later"
+    file = open('words.txt')
+    content = file.readlines()
+    line_number = random.randint(0, len(content))
+    answer = content[line_number].strip()
+
     # we know for a fact a new game has started so...
     exited_from_play_again = 0
 
@@ -141,6 +141,10 @@ class Button:
                 return True 
         return False
 
+    def change_color(self, color, text_color=black):
+        self.color = color
+        self.text_color = text_color
+
     
 enter_key = Button(gray, 600/10 + 20, 800*3/4 + 110, 70, 50, "ENTER", text_size=25)
 backspace_key = Button(gray, 600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50, "")
@@ -157,7 +161,8 @@ def set_up_keyboard():
         
         # pygame.draw.rect(screen, gray, box, 0, 5)
         # key.draw(key, screen)
-        key.draw(screen)
+        # key.draw(screen)
+        top_row_keys[i].draw(screen)
 
         # letter = pygame.font.Font(None, 30).render(top_row[i].upper(), True, black)
         # letter_rect = letter.get_rect(center=(600/8 + 15 + i * 45 + 20, 800*3/4 + 25))
@@ -169,7 +174,8 @@ def set_up_keyboard():
             middle_row_keys.append(key)
         #     middle_row_keys.append(box)
         # pygame.draw.rect(screen, gray, box, 0, 5)
-        key.draw(screen)
+        # key.draw(screen)
+        middle_row_keys[i].draw(screen)
 
         # letter = pygame.font.Font(None, 30).render(middle_row[i].upper(), True, black)
         # letter_rect = letter.get_rect(center=(600/6 + 10 + i * 45 + 20, 800*3/4 + 55 + 25))
@@ -181,7 +187,8 @@ def set_up_keyboard():
             bottom_row_keys.append(key)
             # bottom_row_keys.append(box)
         # pygame.draw.rect(screen, gray, box, 0, 5)
-        key.draw(screen)
+        # key.draw(screen)
+        bottom_row_keys[i].draw(screen)
         # letter = pygame.font.Font(None, 30).render(bottom_row[i].upper(), True, black)
         # letter_rect = letter.get_rect(center=(600/4 + 5 + i * 45 + 20, 800*3/4 + 110 + 25))
         # screen.blit(letter, letter_rect)
@@ -200,7 +207,18 @@ def set_up_keyboard():
     screen.blit(back_img, back_img_rect)
 
 
-
+def change_keyboard_color(letter, color):
+    global top_row_keys, middle_row_keys, bottom_row_keys, top_row, middle_row, bottom_row
+    if letter in top_row:
+        i = top_row.index(letter)
+        top_row_keys[i].change_color(color, white)
+    elif letter in middle_row:
+        i = middle_row.index(letter)
+        middle_row_keys[i].change_color(color, white)
+    elif letter in bottom_row:
+        i = bottom_row.index(letter)
+        bottom_row_keys[i].change_color(color, white)
+    
 
 def set_up_colored_boxes():
     global answer
@@ -211,6 +229,9 @@ def set_up_colored_boxes():
                 list[j] = 1
                 box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
                 pygame.draw.rect(screen, green, box)
+                change_keyboard_color(answer[j], green)
+                
+
         for j in range(0, len(guessed_words[i])):
             if (guessed_words[i][j] != answer[j]):
                 for k in range(0, len(answer)):
@@ -218,10 +239,12 @@ def set_up_colored_boxes():
                         list[k] = 1
                         box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
                         pygame.draw.rect(screen, yellow, box)
+                        change_keyboard_color(answer[k], yellow)
                         break
                 else:
                     box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
                     pygame.draw.rect(screen, dark_gray, box)
+                    change_keyboard_color(guessed_words[i][j], dark_gray)
 
 
 def display_user_input():
@@ -366,6 +389,11 @@ def display_stats(play_again_flag):
                     current_word = 0
                     guessed_words.clear()
                     set_answer()
+                    # reset keyboard colors
+                    top_row_keys.clear()
+                    middle_row_keys.clear()
+                    bottom_row_keys.clear()
+
                     return
                 elif exit_rect.collidepoint(mouse_pos):
                     if play_again_flag == 1:
@@ -445,6 +473,7 @@ def return_key_pressed():
         guessed_words.append(user_input)
         user_input = ""
         set_up_colored_boxes()
+        set_up_keyboard()
         display_guessed_words()
         play_again_request()
 
