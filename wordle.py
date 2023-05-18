@@ -53,7 +53,7 @@ def set_answer():
     content = file.readlines()
     line_number = random.randint(0, len(content))
     answer = content[line_number].strip()
-
+    # answer = "later"
     # we know for a fact a new game has started so...
     exited_from_play_again = 0
 
@@ -293,7 +293,7 @@ def create_graph():
     # Add the values as text annotations inside the bars
     for i, bar in enumerate(bars):
         value = win_type[i]
-        if value == 0:
+        if value == 0 or bar.get_width() < small_height:
             bar.set_width(small_height)
         # ax.text(value + 0.01, bar.get_y() + bar.get_height() / 2, str(value),
         #         ha='left', va='center', fontsize=11, color='red', fontweight='bold')
