@@ -106,42 +106,96 @@ top_row_keys = []
 middle_row_keys = []
 bottom_row_keys = []
 
-enter = pygame.Rect(600/10 + 20, 800*3/4 + 110, 70, 50)
-backspace = pygame.Rect(600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50)
+# enter = pygame.Rect(600/10 + 20, 800*3/4 + 110, 70, 50)
+# backspace = pygame.Rect(600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50)
+
+class Button:
+    # create a button class
+    def __init__(self, color, x, y, width, height, text='', text_color=black, text_size=30):
+        self.color = color
+        self.x = x 
+        self.y = y 
+        self.width = width 
+        self.height = height 
+        self.text = text
+        self.text_color = text_color
+        self.text_size = text_size
+
+
+    def draw(self, screen, outline=None):
+        # Call this method to draw the button on the screen
+        if outline:
+            pygame.draw.rect(screen, outline, (self.x-2, self.y-2, self.width+4, self.height+4), 0, 5)
+
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height), 0, 5)
+
+        if self.text != '':
+            font = pygame.font.Font(None,  self.text_size)
+            text = font.render(self.text, 1, self.text_color)
+            screen.blit(text, (self.x + (self.width/2 - text.get_width()/2), self.y + (self.height/2 - text.get_height()/2)))
+
+    def is_over(self, pos):
+        # Pos is the mouse position or a tuple of (x,y) coordinates
+        if pos[0] > self.x and pos[0] < self.x + self.width:
+            if pos[1] > self.y and pos[1] < self.y + self.height:
+                return True 
+        return False
+
+    
+enter_key = Button(gray, 600/10 + 20, 800*3/4 + 110, 70, 50, "ENTER", text_size=25)
+backspace_key = Button(gray, 600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50, "")
 
 def set_up_keyboard():
-    # global top_row_keys, middle_row_keys, bottom_row_keys, enter, backspace
+    global top_row_keys, middle_row_keys, bottom_row_keys, enter_key, backspace_key
     for i in range(0, 10):
-        box = pygame.Rect(600/8 + 15 + i * 45, 800*3/4, 40, 50)
+        key = Button(gray, 600/8 + 15 + i * 45, 800*3/4, 40, 50, top_row[i].upper())
+
+        # box = pygame.Rect(600/8 + 15 + i * 45, 800*3/4, 40, 50)
         if len(top_row_keys) < 10:
-            top_row_keys.append(box)
-        pygame.draw.rect(screen, gray, box, 0, 5)
-        letter = pygame.font.Font(None, 30).render(top_row[i].upper(), True, black)
-        letter_rect = letter.get_rect(center=(600/8 + 15 + i * 45 + 20, 800*3/4 + 25))
-        screen.blit(letter, letter_rect)
+            top_row_keys.append(key)
+            
+        
+        # pygame.draw.rect(screen, gray, box, 0, 5)
+        # key.draw(key, screen)
+        key.draw(screen)
+
+        # letter = pygame.font.Font(None, 30).render(top_row[i].upper(), True, black)
+        # letter_rect = letter.get_rect(center=(600/8 + 15 + i * 45 + 20, 800*3/4 + 25))
+        # screen.blit(letter, letter_rect)
     for i in range(0, 9):
-        box = pygame.Rect(600/6 + 10 + i * 45, 800*3/4 + 55, 40, 50)
+        # box = pygame.Rect(600/6 + 10 + i * 45, 800*3/4 + 55, 40, 50)
+        key = Button(gray, 600/6 + 10 + i * 45, 800*3/4 + 55, 40, 50, middle_row[i].upper())
         if len(middle_row_keys) < 9:
-            middle_row_keys.append(box)
-        pygame.draw.rect(screen, gray, box, 0, 5)
-        letter = pygame.font.Font(None, 30).render(middle_row[i].upper(), True, black)
-        letter_rect = letter.get_rect(center=(600/6 + 10 + i * 45 + 20, 800*3/4 + 55 + 25))
-        screen.blit(letter, letter_rect)
+            middle_row_keys.append(key)
+        #     middle_row_keys.append(box)
+        # pygame.draw.rect(screen, gray, box, 0, 5)
+        key.draw(screen)
+
+        # letter = pygame.font.Font(None, 30).render(middle_row[i].upper(), True, black)
+        # letter_rect = letter.get_rect(center=(600/6 + 10 + i * 45 + 20, 800*3/4 + 55 + 25))
+        # screen.blit(letter, letter_rect)
     for i in range(0, 7):
-        box = pygame.Rect(600/4 + 5 + i * 45, 800*3/4 + 110, 40, 50)
+        # box = pygame.Rect(600/4 + 5 + i * 45, 800*3/4 + 110, 40, 50)
+        key = Button(gray, 600/4 + 5 + i * 45, 800*3/4 + 110, 40, 50, bottom_row[i].upper())
         if len(bottom_row_keys) < 7:
-            bottom_row_keys.append(box)
-        pygame.draw.rect(screen, gray, box, 0, 5)
-        letter = pygame.font.Font(None, 30).render(bottom_row[i].upper(), True, black)
-        letter_rect = letter.get_rect(center=(600/4 + 5 + i * 45 + 20, 800*3/4 + 110 + 25))
-        screen.blit(letter, letter_rect)
+            bottom_row_keys.append(key)
+            # bottom_row_keys.append(box)
+        # pygame.draw.rect(screen, gray, box, 0, 5)
+        key.draw(screen)
+        # letter = pygame.font.Font(None, 30).render(bottom_row[i].upper(), True, black)
+        # letter_rect = letter.get_rect(center=(600/4 + 5 + i * 45 + 20, 800*3/4 + 110 + 25))
+        # screen.blit(letter, letter_rect)
     
-    pygame.draw.rect(screen, gray, enter, 0, 5)
-    enter_text = pygame.font.Font(None, 25).render("ENTER", True, black)
-    enter_text_rect = enter_text.get_rect(center=(600/10 + 20 + 35, 800*3/4 + 110 + 25))
-    screen.blit(enter_text, enter_text_rect)
+    # pygame.draw.rect(screen, gray, enter, 0, 5)
     
-    pygame.draw.rect(screen, gray, backspace, 0, 5)
+    enter_key.draw(screen)
+    # enter_text = pygame.font.Font(None, 25).render("ENTER", True, black)
+    # enter_text_rect = enter_text.get_rect(center=(600/10 + 20 + 35, 800*3/4 + 110 + 25))
+    # screen.blit(enter_text, enter_text_rect)
+    
+    
+    backspace_key.draw(screen)
+    # pygame.draw.rect(screen, gray, backspace, 0, 5)
     back_img_rect = back_img.get_rect(center=(600/4 + 90*4 - 40 + 35, 800*3/4 + 110 + 25))
     screen.blit(back_img, back_img_rect)
 
@@ -418,22 +472,37 @@ while running:
                     display_stats(0)
             else:
                 for i in range(len(top_row_keys)):
-                    if top_row_keys[i].collidepoint(event.pos):
+                    if top_row_keys[i].is_over(event.pos):
                         if len(user_input) != 5:
                             user_input += top_row[i]
+
+                    # if top_row_keys[i].collidepoint(event.pos):
+                    #     if len(user_input) != 5:
+                    #         user_input += top_row[i]
                 for i in range(len(middle_row_keys)):
-                    if middle_row_keys[i].collidepoint(event.pos):
+                    # if middle_row_keys[i].collidepoint(event.pos):
+                    #     if len(user_input) != 5:
+                    #         user_input += middle_row[i]
+                    if middle_row_keys[i].is_over(event.pos):
                         if len(user_input) != 5:
                             user_input += middle_row[i]
                 for i in range(len(bottom_row_keys)):
-                    if bottom_row_keys[i].collidepoint(event.pos):
+                    # if bottom_row_keys[i].collidepoint(event.pos):
+                    #     if len(user_input) != 5:
+                    #         user_input += bottom_row[i]
+                    if bottom_row_keys[i].is_over(event.pos):
                         if len(user_input) != 5:
                             user_input += bottom_row[i]
-                if backspace.collidepoint(event.pos):
+                if backspace_key.is_over(event.pos):
                     if len(user_input) != 0:
                         user_input = user_input[:-1]
-                if enter.collidepoint(event.pos):
+                if enter_key.is_over(event.pos):
                     return_key_pressed()
+                # if backspace.collidepoint(event.pos):
+                #     if len(user_input) != 0:
+                #         user_input = user_input[:-1]
+                # if enter.collidepoint(event.pos):
+                #     return_key_pressed()
 
     # Clear the screen
     screen.fill(white)
