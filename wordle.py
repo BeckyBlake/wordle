@@ -56,6 +56,7 @@ def set_answer():
     # answer = "later"
     # we know for a fact a new game has started so...
     exited_from_play_again = 0
+    print(answer)
 
 
 # set up boxes
@@ -145,6 +146,9 @@ class Button:
         self.color = color
         self.text_color = text_color
 
+    def get_color(self):
+        return self.color
+
     
 enter_key = Button(gray, 600/10 + 20, 800*3/4 + 110, 70, 50, "ENTER", text_size=25)
 backspace_key = Button(gray, 600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50, "")
@@ -211,26 +215,29 @@ def change_keyboard_color(letter, color):
     global top_row_keys, middle_row_keys, bottom_row_keys, top_row, middle_row, bottom_row
     if letter in top_row:
         i = top_row.index(letter)
-        top_row_keys[i].change_color(color, white)
+        if top_row_keys[i].get_color() != green:
+            top_row_keys[i].change_color(color, white)
     elif letter in middle_row:
         i = middle_row.index(letter)
-        middle_row_keys[i].change_color(color, white)
+        if middle_row_keys[i].get_color() != green:
+            middle_row_keys[i].change_color(color, white)
     elif letter in bottom_row:
         i = bottom_row.index(letter)
-        bottom_row_keys[i].change_color(color, white)
+        if bottom_row_keys[i].get_color() != green:
+            bottom_row_keys[i].change_color(color, white)
     
 
 def set_up_colored_boxes():
     global answer
     for i in range(0, len(guessed_words)):
         list = [0, 0, 0, 0, 0]
+
         for j in range(0, len(guessed_words[i])):
             if (guessed_words[i][j] == answer[j]):
                 list[j] = 1
                 box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
                 pygame.draw.rect(screen, green, box)
                 change_keyboard_color(answer[j], green)
-                
 
         for j in range(0, len(guessed_words[i])):
             if (guessed_words[i][j] != answer[j]):
@@ -245,6 +252,7 @@ def set_up_colored_boxes():
                     box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
                     pygame.draw.rect(screen, dark_gray, box)
                     change_keyboard_color(guessed_words[i][j], dark_gray)
+
 
 
 def display_user_input():
@@ -393,15 +401,17 @@ def display_stats(play_again_flag):
                     top_row_keys.clear()
                     middle_row_keys.clear()
                     bottom_row_keys.clear()
-
+                    plt.close()
                     return
                 elif exit_rect.collidepoint(mouse_pos):
                     if play_again_flag == 1:
                         exited_from_play_again = 1
+                    plt.close()
                     return
                 elif not rectangle.collidepoint(mouse_pos):
                     if play_again_flag == 1:
                         exited_from_play_again = 1
+                    plt.close()
                     return
         
         pygame.draw.rect(screen, white, rectangle)
@@ -444,6 +454,7 @@ def display_stats(play_again_flag):
             
         pygame.display.flip()
         # pygame.display.update()
+        plt.close()
 
 def return_key_pressed():
     global user_input, wins, current_word, current_streak, max_streak, played, guessed_words, win_type, play_again_flag, exited_from_play_again
