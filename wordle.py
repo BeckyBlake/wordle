@@ -17,7 +17,7 @@ pygame.display.set_caption("Wordle")
 
 guessed_words = []
 
-wordle_type = "wordle"
+game_type = "wordle"
 
 # define colors
 white = (255, 255, 255)
@@ -44,8 +44,11 @@ stat_img = pygame.transform.scale(stat_img, (50, 50))
 back_img = pygame.image.load("back.png").convert_alpha()
 back_img = pygame.transform.scale(back_img, (35, 35))
 
-gear_img = pygame.image.load("gear.png").convert_alpha()
-gear_img = pygame.transform.scale(gear_img, (50, 50))
+keyboard_img = pygame.image.load("keyboard.png").convert_alpha()
+keyboard_img = pygame.transform.scale(keyboard_img, (50, 70))
+
+wordle_icon_img = pygame.image.load("wordle-icon.png").convert_alpha()
+wordle_icon_img = pygame.transform.scale(wordle_icon_img, (50, 50))
 
 counter = 0
 
@@ -141,36 +144,54 @@ class Button:
     def get_color(self):
         return self.color
 
-    
 enter_key = Button(gray, 600/10 + 20, 800*3/4 + 110, 70, 50, "ENTER", text_size=25)
 backspace_key = Button(gray, 600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50, "")
 
 def set_up_keyboard():
-    global top_row_keys, middle_row_keys, bottom_row_keys, enter_key, backspace_key
+    global top_row_keys, middle_row_keys, bottom_row_keys, game_type, enter_key, backspace_key
+
     for i in range(0, 10):
-        key = Button(gray, 600/8 + 15 + i * 45, 800*3/4, 40, 50, top_row[i].upper())
+        if game_type == "wordle":
+            key = Button(gray, 600/8 + 15 + i * 45, 800*3/4, 40, 50, top_row[i].upper())
+        elif game_type == "keyboardle":
+            key = Button(gray, 600/8 + 15 + i * 45, 800*1/3, 40, 50, top_row[i].upper(), text_size=20)
         if len(top_row_keys) < 10:
             top_row_keys.append(key)
             
         top_row_keys[i].draw(screen)
 
     for i in range(0, 9):
-        key = Button(gray, 600/6 + 10 + i * 45, 800*3/4 + 55, 40, 50, middle_row[i].upper())
+        if game_type == "wordle":
+            key = Button(gray, 600/6 + 10 + i * 45, 800*3/4 + 55, 40, 50, middle_row[i].upper())
+        elif game_type == "keyboardle":
+            key = Button(gray, 600/6 + 10 + i * 45, 800*1/3 + 55, 40, 50, middle_row[i].upper(), text_size=20)
         if len(middle_row_keys) < 9:
             middle_row_keys.append(key)
 
         middle_row_keys[i].draw(screen)
 
     for i in range(0, 7):
-        key = Button(gray, 600/4 + 5 + i * 45, 800*3/4 + 110, 40, 50, bottom_row[i].upper())
+        if game_type == "wordle":
+            key = Button(gray, 600/4 + 5 + i * 45, 800*3/4 + 110, 40, 50, bottom_row[i].upper())
+        elif game_type == "keyboardle":
+            key = Button(gray, 600/4 + 5 + i * 45, 800*1/3 + 110, 40, 50, bottom_row[i].upper(), text_size=20)
         if len(bottom_row_keys) < 7:
             bottom_row_keys.append(key)
         bottom_row_keys[i].draw(screen)
     
+    if game_type == "wordle":  
+        enter_key = Button(gray, 600/10 + 20, 800*3/4 + 110, 70, 50, "ENTER", text_size=25)
+        backspace_key = Button(gray, 600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50, "")
+    elif game_type == "keyboardle":
+        enter_key = Button(gray, 600/10 + 20, 800*1/3 + 110, 70, 50, "ENTER", text_size=25)
+        backspace_key = Button(gray, 600/4 + 90*4 - 40, 800*1/3 + 110, 70, 50, "")
     enter_key.draw(screen) 
     backspace_key.draw(screen)
 
-    back_img_rect = back_img.get_rect(center=(600/4 + 90*4 - 40 + 35, 800*3/4 + 110 + 25))
+    if game_type == "wordle":
+        back_img_rect = back_img.get_rect(center=(600/4 + 90*4 - 40 + 35, 800*3/4 + 110 + 25))
+    elif game_type == "keyboardle":
+        back_img_rect = back_img.get_rect(center=(600/4 + 90*4 - 40 + 35, 800*1/3 + 110 + 25))
     screen.blit(back_img, back_img_rect)
 
 
@@ -198,8 +219,9 @@ def set_up_colored_boxes():
         for j in range(0, len(guessed_words[i])):
             if (guessed_words[i][j] == answer[j]):
                 list[j] = 1
-                box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
-                pygame.draw.rect(screen, green, box)
+                if game_type == "wordle":
+                    box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
+                    pygame.draw.rect(screen, green, box)
                 change_keyboard_color(answer[j], green)
 
         for j in range(0, len(guessed_words[i])):
@@ -207,13 +229,15 @@ def set_up_colored_boxes():
                 for k in range(0, len(answer)):
                     if (guessed_words[i][j] == answer[k] and list[k] == 0):
                         list[k] = 1
-                        box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
-                        pygame.draw.rect(screen, yellow, box)
+                        if game_type == "wordle":
+                            box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
+                            pygame.draw.rect(screen, yellow, box)
                         change_keyboard_color(answer[k], yellow)
                         break
                 else:
-                    box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
-                    pygame.draw.rect(screen, dark_gray, box)
+                    if game_type == "wordle":
+                        box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
+                        pygame.draw.rect(screen, dark_gray, box)
                     change_keyboard_color(guessed_words[i][j], dark_gray)
 
 def display_user_input():
@@ -438,29 +462,6 @@ def return_key_pressed():
         display_guessed_words()
         play_again_request()
 
-def display_settings():
-    rectangle = pygame.Rect(width/2, height/2, 400, 500)
-    rectangle.center = (width/2, height / 2)
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = event.pos
-                if exit_rect.collidepoint(mouse_pos):
-                    return
-                if not rectangle.collidepoint(mouse_pos):
-                    return
-                
-        pygame.draw.rect(screen, white, rectangle)
-        pygame.draw.rect(screen, gray, rectangle, 2)
-        font = pygame.font.Font(None, 50)
-        exit = font.render("x", True, dark_gray)   
-        exit_rect = exit.get_rect(center=(width/2 + 180, height/2 -230))
-        screen.blit(exit, exit_rect)
-        pygame.display.flip()
-
-
 
 not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, black)
 not_a_word_rect = not_a_word.get_rect(center=(width/2, 110))
@@ -490,8 +491,17 @@ while running:
                     display_stats(1)
                 else:
                     display_stats(0)
-            elif gear_img_rect.collidepoint(event.pos):
-                display_settings()
+            elif keyboard_img_rect.collidepoint(event.pos):
+                if game_type == "wordle":
+                    game_type = "keyboardle"
+                    top_row_keys.clear()
+                    middle_row_keys.clear()
+                    bottom_row_keys.clear()
+                elif game_type == "keyboardle":
+                    game_type = "wordle"
+                    top_row_keys.clear()
+                    middle_row_keys.clear()
+                    bottom_row_keys.clear()
             else:
                 for i in range(len(top_row_keys)):
                     if top_row_keys[i].is_over(event.pos):
@@ -514,25 +524,32 @@ while running:
     # Clear the screen
     screen.fill(white)
     
-    set_up_boxes()
-
-    set_up_colored_boxes()
-
+    if game_type == "wordle":
+        set_up_boxes()
     set_up_keyboard()
+    set_up_colored_boxes()
+    if game_type == "wordle":
+        display_guessed_words()
+        display_user_input()
+    
 
-    display_guessed_words()
-
-    display_user_input()
 
     # display "Wordle"
     font = pygame.font.Font(None, 50)
-    text = font.render("Wordle", True, black)
+    if game_type == "wordle":
+        text = font.render("Wordle", True, black)
+    elif game_type == "keyboardle":
+        text = font.render("Keyboardle", True, black)
     text_rect = text.get_rect(center=(width/2, 50))
     screen.blit(text, text_rect)
     stat_img_rect = stat_img.get_rect(center=(width*3/4, 50))
     screen.blit(stat_img, stat_img_rect)
-    gear_img_rect = gear_img.get_rect(center=(width*3/4 + 50, 50))
-    screen.blit(gear_img, gear_img_rect)
+    if game_type == "wordle":
+        keyboard_img_rect = keyboard_img.get_rect(center=(width*3/4 + 60, 50))
+        screen.blit(keyboard_img, keyboard_img_rect)
+    elif game_type == "keyboardle":
+        wordle_icon_rect = wordle_icon_img.get_rect(center=(width*3/4 + 60, 50))
+        screen.blit(wordle_icon_img, wordle_icon_rect)
 
     if counter > 1024:
         counter = 0
