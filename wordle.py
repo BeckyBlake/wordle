@@ -44,7 +44,10 @@ stat_img = pygame.transform.scale(stat_img, (50, 50))
 back_img = pygame.image.load("back.png").convert_alpha()
 back_img = pygame.transform.scale(back_img, (35, 35))
 
+gear_img = pygame.image.load("gear.png").convert_alpha()
+gear_img = pygame.transform.scale(gear_img, (50, 50))
 
+counter = 0
 
 def set_answer():
     # print("hello")
@@ -68,17 +71,22 @@ def set_up_boxes():
     # box = pygame.Rect(10, 10, 50, 60)
     # pygame.draw.rect(screen, black, box, 2)
 
+# returning -1 means word is too short
+# returning 0 means word is not in wordlist
+# returning 1 means word is in wordlist but not correct
+# returning 2 means word is found and game is over
 def check_word():
+    global user_input, answer, counter
     if len(user_input) < 5:
-        too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, black)
-        too_few_letters_rect = too_few_letters.get_rect(center=(width/2, 110))
-        screen.blit(too_few_letters, too_few_letters_rect)
-        pygame.display.flip()
-        # use pygame.time.set_timer() to set a timer for 4 seconds to display the message
-    
+        # too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, black)
+        # too_few_letters_rect = too_few_letters.get_rect(center=(width/2, 110))
+        # screen.blit(too_few_letters, too_few_letters_rect)
+        # pygame.display.flip()
+        # # use pygame.time.set_timer() to set a timer for 4 seconds to display the message
+        counter = 2
         
-        clock.tick(2)
-        return 0
+        # clock.tick(2)
+        return -1
     elif user_input == answer:
         return 2
     else:
@@ -87,12 +95,13 @@ def check_word():
             for line in f:
                 if line.strip() == user_input:
                     return 1
-        not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, black)
-        # not_a_word.get_rect().center = (width/2, 180)
-        not_a_word_rect = not_a_word.get_rect(center=(width/2, 110))
-        screen.blit(not_a_word, not_a_word_rect)
-        pygame.display.flip()
-        clock.tick(1)
+        # not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, black)
+        # # not_a_word.get_rect().center = (width/2, 180)
+        # not_a_word_rect = not_a_word.get_rect(center=(width/2, 110))
+        # screen.blit(not_a_word, not_a_word_rect)
+        # pygame.display.flip()
+        # clock.tick(1)
+        counter = 1
         return 0
 
 
@@ -488,6 +497,14 @@ def return_key_pressed():
         display_guessed_words()
         play_again_request()
 
+
+
+not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, black)
+not_a_word_rect = not_a_word.get_rect(center=(width/2, 110))
+
+too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, black)
+too_few_letters_rect = too_few_letters.get_rect(center=(width/2, 110))
+
 set_answer()
 running = True
 while running:
@@ -515,21 +532,11 @@ while running:
                     if top_row_keys[i].is_over(event.pos):
                         if len(user_input) != 5:
                             user_input += top_row[i]
-
-                    # if top_row_keys[i].collidepoint(event.pos):
-                    #     if len(user_input) != 5:
-                    #         user_input += top_row[i]
                 for i in range(len(middle_row_keys)):
-                    # if middle_row_keys[i].collidepoint(event.pos):
-                    #     if len(user_input) != 5:
-                    #         user_input += middle_row[i]
                     if middle_row_keys[i].is_over(event.pos):
                         if len(user_input) != 5:
                             user_input += middle_row[i]
                 for i in range(len(bottom_row_keys)):
-                    # if bottom_row_keys[i].collidepoint(event.pos):
-                    #     if len(user_input) != 5:
-                    #         user_input += bottom_row[i]
                     if bottom_row_keys[i].is_over(event.pos):
                         if len(user_input) != 5:
                             user_input += bottom_row[i]
@@ -538,11 +545,6 @@ while running:
                         user_input = user_input[:-1]
                 if enter_key.is_over(event.pos):
                     return_key_pressed()
-                # if backspace.collidepoint(event.pos):
-                #     if len(user_input) != 0:
-                #         user_input = user_input[:-1]
-                # if enter.collidepoint(event.pos):
-                #     return_key_pressed()
 
     # Clear the screen
     screen.fill(white)
@@ -564,8 +566,18 @@ while running:
     screen.blit(text, text_rect)
     stat_img_rect = stat_img.get_rect(center=(width*3/4, 50))
     screen.blit(stat_img, stat_img_rect)
+    gear_img_rect = gear_img.get_rect(center=(width*3/4 + 50, 50))
+    screen.blit(gear_img, gear_img_rect)
 
-        
+    if counter > 1024:
+        counter = 0
+
+    if counter != 0:
+        if counter % 2 == 0:
+            screen.blit(too_few_letters, too_few_letters_rect)
+        else:
+            screen.blit(not_a_word, not_a_word_rect)
+        counter = counter + 2
     
     # Update the display
     pygame.display.flip()
