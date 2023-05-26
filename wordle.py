@@ -6,9 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 pygame.init()
 
-
 clock = pygame.time.Clock()
-
 
 # Set up the Pygame window
 width = 600
@@ -18,6 +16,8 @@ screen = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Wordle")
 
 guessed_words = []
+
+wordle_type = "wordle"
 
 # define colors
 white = (255, 255, 255)
@@ -78,14 +78,7 @@ def set_up_boxes():
 def check_word():
     global user_input, answer, counter
     if len(user_input) < 5:
-        # too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, black)
-        # too_few_letters_rect = too_few_letters.get_rect(center=(width/2, 110))
-        # screen.blit(too_few_letters, too_few_letters_rect)
-        # pygame.display.flip()
-        # # use pygame.time.set_timer() to set a timer for 4 seconds to display the message
         counter = 2
-        
-        # clock.tick(2)
         return -1
     elif user_input == answer:
         return 2
@@ -95,12 +88,6 @@ def check_word():
             for line in f:
                 if line.strip() == user_input:
                     return 1
-        # not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, black)
-        # # not_a_word.get_rect().center = (width/2, 180)
-        # not_a_word_rect = not_a_word.get_rect(center=(width/2, 110))
-        # screen.blit(not_a_word, not_a_word_rect)
-        # pygame.display.flip()
-        # clock.tick(1)
         counter = 1
         return 0
 
@@ -115,9 +102,6 @@ bottom_row = ['z', 'x', 'c', 'v', 'b', 'n', 'm']
 top_row_keys = []
 middle_row_keys = []
 bottom_row_keys = []
-
-# enter = pygame.Rect(600/10 + 20, 800*3/4 + 110, 70, 50)
-# backspace = pygame.Rect(600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50)
 
 class Button:
     # create a button class
@@ -145,7 +129,6 @@ class Button:
             screen.blit(text, (self.x + (self.width/2 - text.get_width()/2), self.y + (self.height/2 - text.get_height()/2)))
 
     def is_over(self, pos):
-        # Pos is the mouse position or a tuple of (x,y) coordinates
         if pos[0] > self.x and pos[0] < self.x + self.width:
             if pos[1] > self.y and pos[1] < self.y + self.height:
                 return True 
@@ -166,56 +149,27 @@ def set_up_keyboard():
     global top_row_keys, middle_row_keys, bottom_row_keys, enter_key, backspace_key
     for i in range(0, 10):
         key = Button(gray, 600/8 + 15 + i * 45, 800*3/4, 40, 50, top_row[i].upper())
-
-        # box = pygame.Rect(600/8 + 15 + i * 45, 800*3/4, 40, 50)
         if len(top_row_keys) < 10:
             top_row_keys.append(key)
             
-        
-        # pygame.draw.rect(screen, gray, box, 0, 5)
-        # key.draw(key, screen)
-        # key.draw(screen)
         top_row_keys[i].draw(screen)
 
-        # letter = pygame.font.Font(None, 30).render(top_row[i].upper(), True, black)
-        # letter_rect = letter.get_rect(center=(600/8 + 15 + i * 45 + 20, 800*3/4 + 25))
-        # screen.blit(letter, letter_rect)
     for i in range(0, 9):
-        # box = pygame.Rect(600/6 + 10 + i * 45, 800*3/4 + 55, 40, 50)
         key = Button(gray, 600/6 + 10 + i * 45, 800*3/4 + 55, 40, 50, middle_row[i].upper())
         if len(middle_row_keys) < 9:
             middle_row_keys.append(key)
-        #     middle_row_keys.append(box)
-        # pygame.draw.rect(screen, gray, box, 0, 5)
-        # key.draw(screen)
+
         middle_row_keys[i].draw(screen)
 
-        # letter = pygame.font.Font(None, 30).render(middle_row[i].upper(), True, black)
-        # letter_rect = letter.get_rect(center=(600/6 + 10 + i * 45 + 20, 800*3/4 + 55 + 25))
-        # screen.blit(letter, letter_rect)
     for i in range(0, 7):
-        # box = pygame.Rect(600/4 + 5 + i * 45, 800*3/4 + 110, 40, 50)
         key = Button(gray, 600/4 + 5 + i * 45, 800*3/4 + 110, 40, 50, bottom_row[i].upper())
         if len(bottom_row_keys) < 7:
             bottom_row_keys.append(key)
-            # bottom_row_keys.append(box)
-        # pygame.draw.rect(screen, gray, box, 0, 5)
-        # key.draw(screen)
         bottom_row_keys[i].draw(screen)
-        # letter = pygame.font.Font(None, 30).render(bottom_row[i].upper(), True, black)
-        # letter_rect = letter.get_rect(center=(600/4 + 5 + i * 45 + 20, 800*3/4 + 110 + 25))
-        # screen.blit(letter, letter_rect)
     
-    # pygame.draw.rect(screen, gray, enter, 0, 5)
-    
-    enter_key.draw(screen)
-    # enter_text = pygame.font.Font(None, 25).render("ENTER", True, black)
-    # enter_text_rect = enter_text.get_rect(center=(600/10 + 20 + 35, 800*3/4 + 110 + 25))
-    # screen.blit(enter_text, enter_text_rect)
-    
-    
+    enter_key.draw(screen) 
     backspace_key.draw(screen)
-    # pygame.draw.rect(screen, gray, backspace, 0, 5)
+
     back_img_rect = back_img.get_rect(center=(600/4 + 90*4 - 40 + 35, 800*3/4 + 110 + 25))
     screen.blit(back_img, back_img_rect)
 
@@ -262,8 +216,6 @@ def set_up_colored_boxes():
                     pygame.draw.rect(screen, dark_gray, box)
                     change_keyboard_color(guessed_words[i][j], dark_gray)
 
-
-
 def display_user_input():
     if exited_from_play_again == 1:
         return
@@ -282,10 +234,6 @@ def display_guessed_words():
             # box = pygame.Rect(600/4 + i * 65, 800/6 + j * 70, 60, 60)
             text_rect = text.get_rect(center=(600/4 + j * 65 + 30, 800/6 + i * 70 + 35))
             screen.blit(text, text_rect)
-        # font = pygame.font.Font(None, 50)
-        # text = font.render(guessed_words[i], True, black)
-        # screen.blit(text, (width/2, i*70 + 800/4 + 10))
-
 
 user_input = ""
 
@@ -312,8 +260,6 @@ def create_graph():
         value = win_type[i]
         if value == 0 or bar.get_width() < small_height:
             bar.set_width(small_height)
-        # ax.text(value + 0.01, bar.get_y() + bar.get_height() / 2, str(value),
-        #         ha='left', va='center', fontsize=11, color='red', fontweight='bold')
         ax.annotate(str(value), xy=(bar.get_width() / 2 - 0.025, bar.get_y() + bar.get_height() / 2),
                 xytext=(0, 0), textcoords='offset points', ha='left', va='center', fontsize=20, color='white')
 
@@ -325,13 +271,10 @@ def create_graph():
     ax.spines['top'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
 
-
-
     plt.axis('off')
     # Remove the y-axis ticks and labels
     ax.yaxis.set_ticks([])
     ax.set_yticklabels([])
-
 
     fig.canvas.draw()
     fig = pygame.transform.scale(fig, (640*1/2, 480*1/2))
@@ -345,7 +288,6 @@ def display_stats(play_again_flag):
     else:
         rectangle = pygame.Rect(width/2, height/2 - 20, 400, 390)
         rectangle.center = (width/2, height / 2)
-
 
     win_percent = 0
     if played == 0:
@@ -462,7 +404,6 @@ def display_stats(play_again_flag):
             screen.blit(no_data_text, no_data_text_rect)
             
         pygame.display.flip()
-        # pygame.display.update()
         plt.close()
 
 def return_key_pressed():
@@ -497,6 +438,28 @@ def return_key_pressed():
         display_guessed_words()
         play_again_request()
 
+def display_settings():
+    rectangle = pygame.Rect(width/2, height/2, 400, 500)
+    rectangle.center = (width/2, height / 2)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                if exit_rect.collidepoint(mouse_pos):
+                    return
+                if not rectangle.collidepoint(mouse_pos):
+                    return
+                
+        pygame.draw.rect(screen, white, rectangle)
+        pygame.draw.rect(screen, gray, rectangle, 2)
+        font = pygame.font.Font(None, 50)
+        exit = font.render("x", True, dark_gray)   
+        exit_rect = exit.get_rect(center=(width/2 + 180, height/2 -230))
+        screen.blit(exit, exit_rect)
+        pygame.display.flip()
+
 
 
 not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, black)
@@ -527,6 +490,8 @@ while running:
                     display_stats(1)
                 else:
                     display_stats(0)
+            elif gear_img_rect.collidepoint(event.pos):
+                display_settings()
             else:
                 for i in range(len(top_row_keys)):
                     if top_row_keys[i].is_over(event.pos):
