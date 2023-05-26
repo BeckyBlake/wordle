@@ -37,7 +37,7 @@ max_streak = 0
 current_streak = 0
 exited_from_play_again = 0
 
-
+# load the images
 stat_img = pygame.image.load("stats.png").convert()
 stat_img = pygame.transform.scale(stat_img, (50, 50))
 
@@ -49,6 +49,12 @@ keyboard_img = pygame.transform.scale(keyboard_img, (50, 70))
 
 wordle_icon_img = pygame.image.load("wordle-icon.png").convert_alpha()
 wordle_icon_img = pygame.transform.scale(wordle_icon_img, (50, 50))
+
+visible_img = pygame.image.load("visible.png").convert_alpha()
+visible_img = pygame.transform.scale(visible_img, (30, 30))
+
+invisible_img = pygame.image.load("invisible.png").convert_alpha()
+invisible_img = pygame.transform.scale(invisible_img, (30, 30))
 
 counter = 0
 
@@ -147,8 +153,11 @@ class Button:
 enter_key = Button(gray, 600/10 + 20, 800*3/4 + 110, 70, 50, "ENTER", text_size=25)
 backspace_key = Button(gray, 600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50, "")
 
+visibility_of_rows = [1, 1, 1]
+back_img_rect = back_img.get_rect(center=(600/4 + 90*4 - 40 + 35, 800*3/4 + 110 + 25))
+
 def set_up_keyboard():
-    global top_row_keys, middle_row_keys, bottom_row_keys, game_type, enter_key, backspace_key
+    global top_row_keys, middle_row_keys, bottom_row_keys, game_type, enter_key, backspace_key, back_img_rect
 
     for i in range(0, 10):
         if game_type == "wordle":
@@ -435,6 +444,7 @@ def return_key_pressed():
     if check_word() == 1:
         if current_word == 5:
             # loss
+            guessed_words.append(user_input)
             current_streak = 0 # :( so sad
             font = pygame.font.Font(None, 50)
             text = font.render(answer, True, white)
@@ -502,6 +512,15 @@ while running:
                     top_row_keys.clear()
                     middle_row_keys.clear()
                     bottom_row_keys.clear()
+            elif visibility_top_rect.collidepoint(event.pos):
+                visibility_of_rows[0] ^= 1
+                top_row_keys.clear()
+            elif visibility_middle_rect.collidepoint(event.pos):
+                visibility_of_rows[1] ^= 1
+                middle_row_keys.clear()
+            elif visibility_bottom_rect.collidepoint(event.pos):
+                visibility_of_rows[2] ^= 1
+                bottom_row_keys.clear()
             else:
                 for i in range(len(top_row_keys)):
                     if top_row_keys[i].is_over(event.pos):
@@ -550,6 +569,42 @@ while running:
     elif game_type == "keyboardle":
         wordle_icon_rect = wordle_icon_img.get_rect(center=(width*3/4 + 60, 50))
         screen.blit(wordle_icon_img, wordle_icon_rect)
+
+    if game_type == "keyboardle":
+        visibility_top_rect = visible_img.get_rect(center=(40, 290))
+        visibility_middle_rect = visible_img.get_rect(center=(40, 345))
+        visibility_bottom_rect = visible_img.get_rect(center=(40, 400))
+
+        if visibility_of_rows[0] == 1:
+            screen.blit(invisible_img, visibility_top_rect)
+        else:
+            screen.blit(visible_img, visibility_top_rect)
+            for i in range(0, 10):
+                top_row_keys[i].change_color(white)
+                top_row_keys[i].draw(screen)
+        if visibility_of_rows[1] == 1:
+            screen.blit(invisible_img, visibility_middle_rect)
+        else:
+            screen.blit(visible_img, visibility_middle_rect)
+            for i in range(0, 9):
+                middle_row_keys[i].change_color(white)
+                middle_row_keys[i].draw(screen)
+        if visibility_of_rows[2] == 1:
+            screen.blit(invisible_img, visibility_bottom_rect)
+        else:
+            screen.blit(visible_img, visibility_bottom_rect)
+            for i in range(0, 7):
+                bottom_row_keys[i].change_color(white)
+                bottom_row_keys[i].draw(screen)
+                enter_key.change_color(white)
+                enter_key.draw(screen)
+                backspace_key.change_color(white)
+                backspace_key.draw(screen)
+                screen.blit(back_img, back_img_rect)
+
+        # screen.blit(visible_img, visibility_top_rect)
+        # screen.blit(visible_img, visibility_middle_rect)
+        # screen.blit(visible_img, visibility_bottom_rect)
 
     if counter > 1024:
         counter = 0
