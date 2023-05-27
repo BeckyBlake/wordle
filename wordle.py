@@ -30,6 +30,8 @@ dark_gray = (100, 100, 100)
 
 answer = "xxxxx"
 
+most_recent_win_type = -1
+
 wins = 0
 win_type = [0, 0, 0, 0, 0, 0]
 played = 0
@@ -295,6 +297,9 @@ def create_graph():
             bar.set_width(small_height)
         ax.annotate(str(value), xy=(bar.get_width() / 2 - 0.025, bar.get_y() + bar.get_height() / 2),
                 xytext=(0, 0), textcoords='offset points', ha='left', va='center', fontsize=20, color='white')
+        if i == most_recent_win_type:
+            bar.set_color((50/256, 168/256, 82/256))
+            # (50, 168, 82)
 
         label = number_labels[i]
         ax.text(0, bar.get_y() + bar.get_height() / 2, label, ha='right', va='center', fontsize=20)
@@ -440,7 +445,7 @@ def display_stats(play_again_flag):
         plt.close()
 
 def return_key_pressed():
-    global user_input, wins, current_word, current_streak, max_streak, played, guessed_words, win_type, play_again_flag, exited_from_play_again
+    global user_input, wins, current_word, current_streak, max_streak, played, guessed_words, win_type, play_again_flag, exited_from_play_again, most_recent_win_type
     if check_word() == 1:
         if current_word == 5:
             # loss
@@ -453,6 +458,7 @@ def return_key_pressed():
             rectangle.center = (width/2, 130)
             pygame.draw.rect(screen, black, rectangle, 0, 3)
             screen.blit(text, text_rect)
+            most_recent_win_type = -1
             play_again_request()
         else:
             current_word += 1
@@ -461,6 +467,7 @@ def return_key_pressed():
     elif check_word() == 2:
         wins += 1
         win_type[current_word] += 1
+        most_recent_win_type = current_word
         current_word += 1
         current_streak += 1
         if current_streak > max_streak:
