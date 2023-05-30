@@ -10,7 +10,6 @@ df = pd.read_excel('words.xlsx')
 
 # read the 5th column of the excel file
 words = df.iloc[:, 5].tolist()
-print(type(words))
 
 
 clock = pygame.time.Clock()
@@ -65,6 +64,9 @@ visible_img = pygame.transform.scale(visible_img, (30, 30))
 invisible_img = pygame.image.load("invisible.png").convert_alpha()
 invisible_img = pygame.transform.scale(invisible_img, (30, 30))
 
+settings_img = pygame.image.load("gear.png").convert_alpha()
+settings_img = pygame.transform.scale(settings_img, (50, 50))
+
 counter = 0
 
 def set_answer():
@@ -86,8 +88,6 @@ def set_up_boxes():
         for j in range(0, 6):
             box = pygame.Rect(600/4 + i * 65, 800/6 + j * 70, 60, 60)
             pygame.draw.rect(screen, gray, box, 2)
-    # box = pygame.Rect(10, 10, 50, 60)
-    # pygame.draw.rect(screen, black, box, 2)
 
 # returning -1 means word is too short
 # returning 0 means word is not in wordlist
@@ -486,6 +486,10 @@ def return_key_pressed():
         display_guessed_words()
         play_again_request()
 
+def display_settings():
+    # things to do for settings branch: add hard mode, add word difficulty, maybe add dark/light mode
+    pass
+
 
 not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, black)
 not_a_word_rect = not_a_word.get_rect(center=(width/2, 110))
@@ -539,6 +543,8 @@ while running:
             elif visibility_bottom_rect.collidepoint(event.pos):
                 visibility_of_rows[2] ^= 1
                 bottom_row_keys.clear()
+            elif settings_img_rect.collidepoint(event.pos):
+                display_settings()
             else:
                 for i in range(len(top_row_keys)):
                     if top_row_keys[i].is_over(event.pos):
@@ -573,6 +579,8 @@ while running:
 
     # display "Wordle"
     font = pygame.font.Font(None, 50)
+    settings_img_rect = settings_img.get_rect(center=(width/5, 50))
+    screen.blit(settings_img, settings_img_rect)
     if game_type == "wordle":
         text = font.render("Wordle", True, black)
     elif game_type == "keyboardle":
@@ -619,10 +627,6 @@ while running:
                 backspace_key.change_color(white)
                 backspace_key.draw(screen)
                 screen.blit(back_img, back_img_rect)
-
-        # screen.blit(visible_img, visibility_top_rect)
-        # screen.blit(visible_img, visibility_middle_rect)
-        # screen.blit(visible_img, visibility_bottom_rect)
 
     if counter > 1024:
         counter = 0
