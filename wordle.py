@@ -493,6 +493,10 @@ not_a_word_rect = not_a_word.get_rect(center=(width/2, 110))
 too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, black)
 too_few_letters_rect = too_few_letters.get_rect(center=(width/2, 110))
 
+visibility_top_rect = visible_img.get_rect(center=(40, 290))
+visibility_middle_rect = visible_img.get_rect(center=(40, 345))
+visibility_bottom_rect = visible_img.get_rect(center=(40, 400))
+
 set_answer()
 running = True
 while running:
