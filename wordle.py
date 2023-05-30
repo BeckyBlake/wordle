@@ -3,8 +3,15 @@ import random
 import matplotlib
 matplotlib.use('module://pygame_matplotlib.backend_pygame')
 import matplotlib.pyplot as plt
-import numpy as np
+import pandas as pd
 pygame.init()
+
+df = pd.read_excel('words.xlsx')
+
+# read the 5th column of the excel file
+words = df.iloc[:, 5].tolist()
+print(type(words))
+
 
 clock = pygame.time.Clock()
 
@@ -62,11 +69,11 @@ counter = 0
 
 def set_answer():
     # print("hello")
-    global answer, exited_from_play_again
-    file = open('words.txt')
-    content = file.readlines()
-    line_number = random.randint(0, len(content))
-    answer = content[line_number].strip()
+    global answer, exited_from_play_again, words
+    # file = open('words.txt')
+    # content = file.readlines()
+    line_number = random.randint(0, len(words))
+    answer = words[line_number].strip().lower()
     # answer = "later"
     # we know for a fact a new game has started so...
     exited_from_play_again = 0
