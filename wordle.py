@@ -1,16 +1,16 @@
-import pygame
 import random
 import matplotlib
 matplotlib.use('module://pygame_matplotlib.backend_pygame')
+import pygame
 import matplotlib.pyplot as plt
 import pandas as pd
+from components import Button, ToggleSwitch
 pygame.init()
 
 df = pd.read_excel('words.xlsx')
 
 # read the 5th column of the excel file
 words = df.iloc[:, 5].tolist()
-
 
 clock = pygame.time.Clock()
 
@@ -121,44 +121,6 @@ top_row_keys = []
 middle_row_keys = []
 bottom_row_keys = []
 
-class Button:
-    # create a button class
-    def __init__(self, color, x, y, width, height, text='', text_color=black, text_size=30):
-        self.color = color
-        self.x = x 
-        self.y = y 
-        self.width = width 
-        self.height = height 
-        self.text = text
-        self.text_color = text_color
-        self.text_size = text_size
-
-
-    def draw(self, screen, outline=None):
-        # Call this method to draw the button on the screen
-        if outline:
-            pygame.draw.rect(screen, outline, (self.x-2, self.y-2, self.width+4, self.height+4), 0, 5)
-
-        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height), 0, 5)
-
-        if self.text != '':
-            font = pygame.font.Font(None,  self.text_size)
-            text = font.render(self.text, 1, self.text_color)
-            screen.blit(text, (self.x + (self.width/2 - text.get_width()/2), self.y + (self.height/2 - text.get_height()/2)))
-
-    def is_over(self, pos):
-        if pos[0] > self.x and pos[0] < self.x + self.width:
-            if pos[1] > self.y and pos[1] < self.y + self.height:
-                return True 
-        return False
-
-    def change_color(self, color, text_color=black):
-        self.color = color
-        self.text_color = text_color
-
-    def get_color(self):
-        return self.color
-
 enter_key = Button(gray, 600/10 + 20, 800*3/4 + 110, 70, 50, "ENTER", text_size=25)
 backspace_key = Button(gray, 600/4 + 90*4 - 40, 800*3/4 + 110, 70, 50, "")
 
@@ -166,7 +128,7 @@ visibility_of_rows = [1, 1, 1]
 back_img_rect = back_img.get_rect(center=(600/4 + 90*4 - 40 + 35, 800*3/4 + 110 + 25))
 
 def set_up_keyboard():
-    global top_row_keys, middle_row_keys, bottom_row_keys, game_type, enter_key, backspace_key, back_img_rect
+    global top_row_keys, middle_row_keys, bottom_row_keys, game_type, enter_key, backspace_key, back_img_rect, screen
 
     for i in range(0, 10):
         if game_type == "wordle":
@@ -486,9 +448,37 @@ def return_key_pressed():
         display_guessed_words()
         play_again_request()
 
+
 def display_settings():
     # things to do for settings branch: add hard mode, add word difficulty, maybe add dark/light mode
-    pass
+    global white, dark_gray, screen
+    
+    title = pygame.font.Font(None, 50).render("Settings", True, black)
+    title_rect = title.get_rect(center=(width/2 - 10, 50))
+    hard_mode_switch = ToggleSwitch(width/2 - 25, 150, dark_gray, green)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                if exit_rect.collidepoint(mouse_pos):
+                    return
+                elif hard_mode_switch.is_over(mouse_pos):
+                    hard_mode_switch.toggle()
+                    hard_mode_switch.draw(screen)
+                
+        screen.fill(white)
+
+        font = pygame.font.Font(None, 60)
+        exit = font.render("x", True, dark_gray)
+        exit_rect = exit.get_rect(center=(570, 40))
+        screen.blit(exit, exit_rect)
+        screen.blit(title, title_rect)
+
+        hard_mode_switch.draw(screen)
+
+        pygame.display.flip()
 
 
 not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, black)
@@ -514,6 +504,9 @@ while running:
                 if len(user_input) != 0:
                     user_input = user_input[:-1]
             else:
+                # if it is not a letter, don't add it
+                if not event.unicode.isalpha():
+                    continue
                 if len(user_input) != 5:
                     user_input += event.unicode
                     # print(user_input)
