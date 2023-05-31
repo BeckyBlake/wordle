@@ -34,6 +34,7 @@ yellow = (204, 183, 78)
 red = (255, 0, 0)
 dark_gray = (100, 100, 100)
 
+
 answer = "xxxxx"
 
 most_recent_win_type = -1
@@ -288,7 +289,7 @@ def create_graph():
     return fig
 
 def display_stats(play_again_flag):
-    global exited_from_play_again, wins, played, max_streak, current_streak, win_type, screen, user_input, current_word, guessed_words
+    global exited_from_play_again, wins, played, max_streak, current_streak, win_type, screen, user_input, current_word, guessed_words, running
     if play_again_flag == 1:
         rectangle = pygame.Rect(width/2, height/2 - 20, 400, 430)
         rectangle.center = (width/2, height * 1.1/2 - 20)
@@ -346,7 +347,8 @@ def display_stats(play_again_flag):
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                running = False
+                return
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 if inner_rectangle.collidepoint(mouse_pos):
@@ -449,34 +451,75 @@ def return_key_pressed():
         play_again_request()
 
 
+hard_mode_switch = ToggleSwitch(width*2/3, 150, dark_gray, green)
+difficult_words_switch = ToggleSwitch(width*2/3, 250, dark_gray, green)
+dark_mode_switch = ToggleSwitch(width*2/3, 350, dark_gray, green)
+
 def display_settings():
     # things to do for settings branch: add hard mode, add word difficulty, maybe add dark/light mode
-    global white, dark_gray, screen
+    global white, dark_gray, screen, running, hard_mode_switch, difficult_words_switch, dark_mode_switch, black
+
+    if dark_mode_switch.get_state() == 1:
+        text_color = white
+    else:
+        text_color = black
     
-    title = pygame.font.Font(None, 50).render("Settings", True, black)
-    title_rect = title.get_rect(center=(width/2 - 10, 50))
-    hard_mode_switch = ToggleSwitch(width/2 - 25, 150, dark_gray, green)
+    
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                running = False
+                return
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 if exit_rect.collidepoint(mouse_pos):
                     return
                 elif hard_mode_switch.is_over(mouse_pos):
                     hard_mode_switch.toggle()
-                    hard_mode_switch.draw(screen)
-                
-        screen.fill(white)
+                elif difficult_words_switch.is_over(mouse_pos):
+                    difficult_words_switch.toggle()
+                elif dark_mode_switch.is_over(mouse_pos):
+                    dark_mode_switch.toggle()
+                    if dark_mode_switch.get_state() == 1:
+                        text_color = white
+                    else:
+                        text_color = black
+
+        if dark_mode_switch.get_state() == 1:
+            screen.fill(black)
+        else:
+            screen.fill(white)
+
+        title = pygame.font.Font(None, 50).render("Settings", True, text_color)
+        title_rect = title.get_rect(center=(width/2 - 10, 50))
+
+        smaller_font = pygame.font.Font(None, 30)
+        
+        hard_mode = smaller_font.render("Hard Mode", True, text_color)
+        hard_mode_rect = (width/4, 150)
+
+
+        difficult_words = smaller_font.render("Difficult Words", True, text_color)
+        difficult_words_rect = (width/4, 250)
+
+        dark_mode = smaller_font.render("Dark Mode", True, text_color)
+        dark_mode_rect = (width/4, 350)
 
         font = pygame.font.Font(None, 60)
-        exit = font.render("x", True, dark_gray)
+        exit = font.render("x", True, text_color)
         exit_rect = exit.get_rect(center=(570, 40))
         screen.blit(exit, exit_rect)
         screen.blit(title, title_rect)
+        screen.blit(hard_mode, hard_mode_rect)
+        screen.blit(difficult_words, difficult_words_rect)
+        screen.blit(dark_mode, dark_mode_rect)
 
         hard_mode_switch.draw(screen)
+        pygame.draw.line(screen, gray, (width/5, 212), (width*4/5, 212), 2)
+        difficult_words_switch.draw(screen)
+        pygame.draw.line(screen, gray, (width/5, 312), (width*4/5, 312), 2)
+        dark_mode_switch.draw(screen)
+        pygame.draw.line(screen, gray, (width/5, 412), (width*4/5, 412), 2)
 
         pygame.display.flip()
 
