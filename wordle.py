@@ -33,6 +33,7 @@ green = (50, 168, 82)
 yellow = (204, 183, 78)
 red = (255, 0, 0)
 dark_gray = (100, 100, 100)
+almost_black = (20, 20, 20)
 
 
 answer = "xxxxx"
@@ -47,7 +48,7 @@ current_streak = 0
 exited_from_play_again = 0
 
 # load the images
-stat_img = pygame.image.load("images/stats.png").convert()
+stat_img = pygame.image.load("images/stats.png").convert_alpha()
 stat_img = pygame.transform.scale(stat_img, (50, 50))
 
 back_img = pygame.image.load("images/back.png").convert_alpha()
@@ -67,6 +68,18 @@ invisible_img = pygame.transform.scale(invisible_img, (30, 30))
 
 settings_img = pygame.image.load("images/gear.png").convert_alpha()
 settings_img = pygame.transform.scale(settings_img, (50, 50))
+
+light_keyboard_img = pygame.image.load("images/light-keyboard.png").convert_alpha()
+light_keyboard_img = pygame.transform.scale(light_keyboard_img, (50, 70))
+
+light_stats_img = pygame.image.load("images/light-stats.png").convert_alpha()
+light_stats_img = pygame.transform.scale(light_stats_img, (50, 50))
+
+light_visible_img = pygame.image.load("images/light-visible.png").convert_alpha()
+light_visible_img = pygame.transform.scale(light_visible_img, (30, 30))
+
+light_invisible_img = pygame.image.load("images/light-invisible.png").convert_alpha()
+light_invisible_img = pygame.transform.scale(light_invisible_img, (30, 30))
 
 counter = 0
 
@@ -227,7 +240,10 @@ def display_user_input():
     y = current_word*70 + 800/6 + 15
     font = pygame.font.Font(None, 50)
     for i in range(0, len(user_input)):
-        text = font.render(user_input[i].upper(), True, black)
+        if dark_mode_switch.get_state() == 1:
+            text = font.render(user_input[i].upper(), True, white)
+        else:
+            text = font.render(user_input[i].upper(), True, black)
         text_rect = text.get_rect(center=(600/4 + i * 65 + 30, 800/6 + current_word * 70 + 35))
         screen.blit(text, text_rect)
 
@@ -534,6 +550,7 @@ visibility_top_rect = visible_img.get_rect(center=(40, 290))
 visibility_middle_rect = visible_img.get_rect(center=(40, 345))
 visibility_bottom_rect = visible_img.get_rect(center=(40, 400))
 
+
 set_answer()
 running = True
 while running:
@@ -601,7 +618,10 @@ while running:
                     return_key_pressed()
 
     # Clear the screen
-    screen.fill(white)
+    if dark_mode_switch.get_state() == 1:
+        screen.fill(almost_black)
+    else:
+        screen.fill(white)
     
     if game_type == "wordle":
         set_up_boxes()
@@ -611,50 +631,82 @@ while running:
         display_guessed_words()
         display_user_input()
     
-
-
-    # display "Wordle"
     font = pygame.font.Font(None, 50)
     settings_img_rect = settings_img.get_rect(center=(width/5, 50))
     screen.blit(settings_img, settings_img_rect)
     if game_type == "wordle":
-        text = font.render("Wordle", True, black)
+        if dark_mode_switch.get_state() == 1:
+            text = font.render("Wordle", True, white)
+        else:
+            text = font.render("Wordle", True, black)
     elif game_type == "keyboardle":
-        text = font.render("Keyboardle", True, black)
+        if dark_mode_switch.get_state() == 1:
+            text = font.render("Keyboardle", True, white)
+        else:
+            text = font.render("Keyboardle", True, black)
     text_rect = text.get_rect(center=(width/2, 50))
     screen.blit(text, text_rect)
+    
+    # display stats symbol
     stat_img_rect = stat_img.get_rect(center=(width*3/4, 50))
-    screen.blit(stat_img, stat_img_rect)
+    if dark_mode_switch.get_state() == 1:
+        screen.blit(light_stats_img, stat_img_rect)
+    else:
+        screen.blit(stat_img, stat_img_rect)
+    
+    # display either keyboardle or wordle icon
     if game_type == "wordle":
         keyboard_img_rect = keyboard_img.get_rect(center=(width*3/4 + 60, 50))
-        screen.blit(keyboard_img, keyboard_img_rect)
+        if dark_mode_switch.get_state() == 1:
+            screen.blit(light_keyboard_img, keyboard_img_rect)
+        else:
+            screen.blit(keyboard_img, keyboard_img_rect)
     elif game_type == "keyboardle":
         wordle_icon_rect = wordle_icon_img.get_rect(center=(width*3/4 + 60, 50))
         screen.blit(wordle_icon_img, wordle_icon_rect)
 
+    # if the game is keyboardle, display the visibility buttons
     if game_type == "keyboardle":
         visibility_top_rect = visible_img.get_rect(center=(40, 290))
         visibility_middle_rect = visible_img.get_rect(center=(40, 345))
         visibility_bottom_rect = visible_img.get_rect(center=(40, 400))
 
         if visibility_of_rows[0] == 1:
-            screen.blit(invisible_img, visibility_top_rect)
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_invisible_img, visibility_top_rect)
+            else:
+                screen.blit(invisible_img, visibility_top_rect)
         else:
-            screen.blit(visible_img, visibility_top_rect)
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_visible_img, visibility_top_rect)
+            else:
+                screen.blit(visible_img, visibility_top_rect)
             for i in range(0, 10):
                 top_row_keys[i].change_color(white)
                 top_row_keys[i].draw(screen)
         if visibility_of_rows[1] == 1:
-            screen.blit(invisible_img, visibility_middle_rect)
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_invisible_img, visibility_middle_rect)
+            else:
+                screen.blit(invisible_img, visibility_middle_rect)
         else:
-            screen.blit(visible_img, visibility_middle_rect)
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_visible_img, visibility_middle_rect)
+            else:
+                screen.blit(visible_img, visibility_middle_rect)
             for i in range(0, 9):
                 middle_row_keys[i].change_color(white)
                 middle_row_keys[i].draw(screen)
         if visibility_of_rows[2] == 1:
-            screen.blit(invisible_img, visibility_bottom_rect)
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_invisible_img, visibility_bottom_rect)
+            else:
+                screen.blit(invisible_img, visibility_bottom_rect)
         else:
-            screen.blit(visible_img, visibility_bottom_rect)
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_visible_img, visibility_bottom_rect)
+            else:
+                screen.blit(visible_img, visibility_bottom_rect)
             for i in range(0, 7):
                 bottom_row_keys[i].change_color(white)
                 bottom_row_keys[i].draw(screen)
@@ -669,8 +721,12 @@ while running:
 
     if counter != 0:
         if counter % 2 == 0:
+            if dark_mode_switch.get_state() == 1:
+                too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, white)
             screen.blit(too_few_letters, too_few_letters_rect)
         else:
+            if dark_mode_switch.get_state() == 1:
+                not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, white)
             screen.blit(not_a_word, not_a_word_rect)
         counter = counter + 2
     
