@@ -46,25 +46,25 @@ current_streak = 0
 exited_from_play_again = 0
 
 # load the images
-stat_img = pygame.image.load("stats.png").convert()
+stat_img = pygame.image.load("images/stats.png").convert()
 stat_img = pygame.transform.scale(stat_img, (50, 50))
 
-back_img = pygame.image.load("back.png").convert_alpha()
+back_img = pygame.image.load("images/back.png").convert_alpha()
 back_img = pygame.transform.scale(back_img, (35, 35))
 
-keyboard_img = pygame.image.load("keyboard.png").convert_alpha()
+keyboard_img = pygame.image.load("images/keyboard.png").convert_alpha()
 keyboard_img = pygame.transform.scale(keyboard_img, (50, 70))
 
-wordle_icon_img = pygame.image.load("wordle-icon.png").convert_alpha()
+wordle_icon_img = pygame.image.load("images/wordle-icon.png").convert_alpha()
 wordle_icon_img = pygame.transform.scale(wordle_icon_img, (50, 50))
 
-visible_img = pygame.image.load("visible.png").convert_alpha()
+visible_img = pygame.image.load("images/visible.png").convert_alpha()
 visible_img = pygame.transform.scale(visible_img, (30, 30))
 
-invisible_img = pygame.image.load("invisible.png").convert_alpha()
+invisible_img = pygame.image.load("images/invisible.png").convert_alpha()
 invisible_img = pygame.transform.scale(invisible_img, (30, 30))
 
-settings_img = pygame.image.load("gear.png").convert_alpha()
+settings_img = pygame.image.load("images/gear.png").convert_alpha()
 settings_img = pygame.transform.scale(settings_img, (50, 50))
 
 counter = 0
