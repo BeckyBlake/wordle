@@ -108,12 +108,42 @@ def set_up_boxes():
             box = pygame.Rect(600/4 + i * 65, 800/6 + j * 70, 60, 60)
             pygame.draw.rect(screen, gray, box, 2)
 
+def check_word_hard_mode():
+    global user_input, answer, counter, guessed_words
+    if len(guessed_words) == 0:
+        # it's the first guess, so its aight
+        return 1
+    
+    prev_guess = guessed_words[-1]
+    for i in range(0, len(prev_guess)):
+        if prev_guess[i] == answer[i]: # so they had a green in this spot in the prev guess
+            if user_input[i] != answer[i]:
+                counter = 3
+                # does not obey hard mode
+                return 3
+        else: # so they didn't have a green in this spot in the prev guess
+            for j in range(0, len(answer)):
+                if prev_guess[i] == answer[j] and i != j: # yellow
+                    # check that the user put this yellow somewhere in their most recent guess
+                    we_good = 0
+                    for k in range(0, len(user_input)): # triple for loop :(
+                        if user_input[k] == prev_guess[i]:
+                            we_good = 1
+                            break
+                    if we_good == 0:
+                        # does not obey hard mode
+                        counter = 3
+                        return 3
+    # it obeys hard mode
+    return 1
+
 # returning -1 means word is too short
 # returning 0 means word is not in wordlist
 # returning 1 means word is in wordlist but not correct
 # returning 2 means word is found and game is over
+# returning 3 means word doesn't obey hard mode
 def check_word():
-    global user_input, answer, counter
+    global user_input, answer, counter, hard_mode_switch
     if len(user_input) < 5:
         counter = 2
         return -1
@@ -124,7 +154,10 @@ def check_word():
         with open("words.txt", "r") as f:
             for line in f:
                 if line.strip() == user_input:
-                    return 1
+                    if hard_mode_switch.get_state() == 1:
+                        return check_word_hard_mode()
+                    else:
+                        return 1
         counter = 1
         return 0
 
@@ -225,7 +258,7 @@ def set_up_colored_boxes():
 
         for j in range(0, len(guessed_words[i])):
             if (guessed_words[i][j] != answer[j]):
-                for k in range(0, len(answer)):
+                for k in range(0, len(answer)): # triple for loop :(
                     if (guessed_words[i][j] == answer[k] and list[k] == 0):
                         list[k] = 1
                         if game_type == "wordle":
@@ -233,11 +266,13 @@ def set_up_colored_boxes():
                             pygame.draw.rect(screen, yellow, box)
                         change_keyboard_color(answer[k], yellow)
                         break
-                else:
-                    if game_type == "wordle":
-                        box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
-                        pygame.draw.rect(screen, dark_gray, box)
-                    change_keyboard_color(guessed_words[i][j], dark_gray)
+                    else:
+                        if game_type == "wordle":
+                            box = pygame.Rect(600/4 + j * 65, 800/6 + i * 70, 60, 60)
+                            pygame.draw.rect(screen, dark_gray, box)
+                        
+                        if guessed_words[i][j] not in answer:
+                            change_keyboard_color(guessed_words[i][j], dark_gray)
 
 def display_user_input():
     if exited_from_play_again == 1:
@@ -468,7 +503,8 @@ def return_key_pressed():
         user_input = ""
         set_up_colored_boxes()
         set_up_keyboard()
-        display_guessed_words()
+        if game_type == "wordle":
+            display_guessed_words()
         play_again_request()
 
 
@@ -478,13 +514,14 @@ dark_mode_switch = ToggleSwitch(width*2/3, 350, dark_gray, green)
 
 def display_settings():
     # things to do for settings branch: add hard mode, add word difficulty, maybe add dark/light mode
-    global white, dark_gray, screen, running, hard_mode_switch, difficult_words_switch, dark_mode_switch, black
+    global white, dark_gray, screen, running, hard_mode_switch, difficult_words_switch, dark_mode_switch, black, guessed_words
 
     if dark_mode_switch.get_state() == 1:
         text_color = white
     else:
         text_color = black
     
+    counter = 0
     
     while True:
         for event in pygame.event.get():
@@ -496,7 +533,10 @@ def display_settings():
                 if exit_rect.collidepoint(mouse_pos):
                     return
                 elif hard_mode_switch.is_over(mouse_pos):
-                    hard_mode_switch.toggle()
+                    if len(guessed_words) != 0 and hard_mode_switch.get_state() == 0:
+                        counter = 1
+                    else:
+                        hard_mode_switch.toggle()
                 elif difficult_words_switch.is_over(mouse_pos):
                     difficult_words_switch.toggle()
                 elif dark_mode_switch.is_over(mouse_pos):
@@ -535,6 +575,16 @@ def display_settings():
         screen.blit(difficult_words, difficult_words_rect)
         screen.blit(dark_mode, dark_mode_rect)
 
+        if counter > 1024:
+            counter = 0
+        
+        if counter > 0:
+            # this means they cannot flip hardmode switch on right now
+            hard_mode_message = pygame.font.Font(None, 30).render("Hard mode can only be enabled at the start of a round", True, text_color)
+            hard_mode_message_rect = hard_mode_message.get_rect(center=(width/2, 130))
+            screen.blit(hard_mode_message, hard_mode_message_rect)
+            counter += 1
+
         hard_mode_switch.draw(screen)
         pygame.draw.line(screen, gray, (width/5, 212), (width*4/5, 212), 2)
         difficult_words_switch.draw(screen)
@@ -550,6 +600,9 @@ not_a_word_rect = not_a_word.get_rect(center=(width/2, 110))
 
 too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, black)
 too_few_letters_rect = too_few_letters.get_rect(center=(width/2, 110))
+
+hard_mode_not_obeyed = pygame.font.Font(None, 30).render("Does not obey hard mode", True, black)
+hard_mode_not_obeyed_rect = hard_mode_not_obeyed.get_rect(center=(width/2, 110))
 
 visibility_top_rect = visible_img.get_rect(center=(40, 290))
 visibility_middle_rect = visible_img.get_rect(center=(40, 345))
@@ -722,19 +775,27 @@ while running:
                 backspace_key.draw(screen)
                 screen.blit(back_img, back_img_rect)
 
-    if counter > 1024:
+    if counter > 512 or counter < -256:
         counter = 0
 
+
     if counter != 0:
-        if counter % 2 == 0:
+        if counter % 2 == 0 and len(user_input) != 5 and counter > 0:
             if dark_mode_switch.get_state() == 1:
                 too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, white)
             screen.blit(too_few_letters, too_few_letters_rect)
+            counter += 2
+        elif counter % 3 == 0 and counter > 0:
+            if dark_mode_switch.get_state() == 1:
+                hard_mode_not_obeyed = pygame.font.Font(None, 30).render("Does not obey hard mode", True, white)
+            screen.blit(hard_mode_not_obeyed, hard_mode_not_obeyed_rect)
+            counter += 3
         else:
             if dark_mode_switch.get_state() == 1:
                 not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, white)
             screen.blit(not_a_word, not_a_word_rect)
-        counter = counter + 2
+            counter -= 2
+        # counter = counter + 2
     
     # Update the display
     pygame.display.flip()
