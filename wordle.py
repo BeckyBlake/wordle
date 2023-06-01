@@ -85,11 +85,16 @@ counter = 0
 
 def set_answer():
     # print("hello")
-    global answer, exited_from_play_again, words
-    # file = open('words.txt')
-    # content = file.readlines()
-    line_number = random.randint(0, len(words))
-    answer = words[line_number].strip().lower()
+    global answer, exited_from_play_again, words, difficult_words_switch
+    
+    if difficult_words_switch.get_state() == 1:
+        file = open('words.txt')
+        content = file.readlines()
+        line_number = random.randint(0, len(content))
+        answer = content[line_number].strip()
+    else:
+        line_number = random.randint(0, len(words))
+        answer = words[line_number].strip().lower()
     # answer = "later"
     # we know for a fact a new game has started so...
     exited_from_play_again = 0
@@ -631,6 +636,7 @@ while running:
         display_guessed_words()
         display_user_input()
     
+    # display title at top
     font = pygame.font.Font(None, 50)
     settings_img_rect = settings_img.get_rect(center=(width/5, 50))
     screen.blit(settings_img, settings_img_rect)
