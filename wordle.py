@@ -405,6 +405,7 @@ def display_stats(play_again_flag):
     
 
     while True:
+        set_up_screen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -471,6 +472,19 @@ def display_stats(play_again_flag):
         screen.blit(played_small_text, played_small_rect)
         if played == 0:
             screen.blit(no_data_text, no_data_text_rect)
+
+        if exit_rect.collidepoint(pygame.mouse.get_pos()):
+            pointer_img_rect = pygame.mouse.get_pos()
+            pygame.mouse.set_visible(False)
+            screen.blit(pointer_img, pointer_img_rect)
+        elif play_again_flag == 1 and inner_rectangle.collidepoint(pygame.mouse.get_pos()):
+            pygame.draw.rect(screen, (70, 188, 102), inner_rectangle)
+            screen.blit(text, text_rect)
+            pointer_img_rect = pygame.mouse.get_pos()
+            pygame.mouse.set_visible(False)
+            screen.blit(pointer_img, pointer_img_rect)
+        else:
+            pygame.mouse.set_visible(True)
             
         pygame.display.flip()
         plt.close()
@@ -596,7 +610,115 @@ def display_settings():
         dark_mode_switch.draw(screen)
         pygame.draw.line(screen, gray, (width/5, 412), (width*4/5, 412), 2)
 
+        if exit_rect.collidepoint(pygame.mouse.get_pos()):
+            pointer_img_rect = pygame.mouse.get_pos()
+            pygame.mouse.set_visible(False)
+            screen.blit(pointer_img, pointer_img_rect)
+        else:
+            pygame.mouse.set_visible(True)
+
         pygame.display.flip()
+
+def set_up_screen():
+    # Clear the screen
+    if dark_mode_switch.get_state() == 1:
+        screen.fill(almost_black)
+    else:
+        screen.fill(white)
+    
+    if game_type == "wordle":
+        set_up_boxes()
+    set_up_keyboard()
+    set_up_colored_boxes()
+    if game_type == "wordle":
+        display_guessed_words()
+        display_user_input()
+    
+    # display title at top
+    font = pygame.font.Font(None, 50)
+    settings_img_rect = settings_img.get_rect(center=(width/5, 50))
+    screen.blit(settings_img, settings_img_rect)
+    if game_type == "wordle":
+        if dark_mode_switch.get_state() == 1:
+            text = font.render("Wordle", True, white)
+        else:
+            text = font.render("Wordle", True, black)
+    elif game_type == "keyboardle":
+        if dark_mode_switch.get_state() == 1:
+            text = font.render("Keyboardle", True, white)
+        else:
+            text = font.render("Keyboardle", True, black)
+    text_rect = text.get_rect(center=(width/2, 50))
+    screen.blit(text, text_rect)
+    
+    # display stats symbol
+    stat_img_rect = stat_img.get_rect(center=(width*3/4, 50))
+    if dark_mode_switch.get_state() == 1:
+        screen.blit(light_stats_img, stat_img_rect)
+    else:
+        screen.blit(stat_img, stat_img_rect)
+    
+    # display either keyboardle or wordle icon
+    if game_type == "wordle":
+        keyboard_img_rect = keyboard_img.get_rect(center=(width*3/4 + 60, 50))
+        if dark_mode_switch.get_state() == 1:
+            screen.blit(light_keyboard_img, keyboard_img_rect)
+        else:
+            screen.blit(keyboard_img, keyboard_img_rect)
+    elif game_type == "keyboardle":
+        wordle_icon_rect = wordle_icon_img.get_rect(center=(width*3/4 + 60, 50))
+        screen.blit(wordle_icon_img, wordle_icon_rect)
+
+    # if the game is keyboardle, display the visibility buttons
+    if game_type == "keyboardle":
+        visibility_top_rect = visible_img.get_rect(center=(40, 290))
+        visibility_middle_rect = visible_img.get_rect(center=(40, 345))
+        visibility_bottom_rect = visible_img.get_rect(center=(40, 400))
+
+        if visibility_of_rows[0] == 1:
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_invisible_img, visibility_top_rect)
+            else:
+                screen.blit(invisible_img, visibility_top_rect)
+        else:
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_visible_img, visibility_top_rect)
+            else:
+                screen.blit(visible_img, visibility_top_rect)
+            for i in range(0, 10):
+                top_row_keys[i].change_color(white)
+                top_row_keys[i].draw(screen)
+        if visibility_of_rows[1] == 1:
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_invisible_img, visibility_middle_rect)
+            else:
+                screen.blit(invisible_img, visibility_middle_rect)
+        else:
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_visible_img, visibility_middle_rect)
+            else:
+                screen.blit(visible_img, visibility_middle_rect)
+            for i in range(0, 9):
+                middle_row_keys[i].change_color(white)
+                middle_row_keys[i].draw(screen)
+        if visibility_of_rows[2] == 1:
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_invisible_img, visibility_bottom_rect)
+            else:
+                screen.blit(invisible_img, visibility_bottom_rect)
+        else:
+            if dark_mode_switch.get_state() == 1:
+                screen.blit(light_visible_img, visibility_bottom_rect)
+            else:
+                screen.blit(visible_img, visibility_bottom_rect)
+            for i in range(0, 7):
+                bottom_row_keys[i].change_color(white)
+                bottom_row_keys[i].draw(screen)
+                enter_key.change_color(white)
+                enter_key.draw(screen)
+                backspace_key.change_color(white)
+                backspace_key.draw(screen)
+                screen.blit(back_img, back_img_rect)
 
 
 not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, black)
@@ -633,6 +755,7 @@ while running:
                     user_input += event.unicode
                     # print(user_input)
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            pygame.mouse.set_visible(True)
             if stat_img_rect.collidepoint(event.pos):
                 if exited_from_play_again == 1:
                     display_stats(1)
