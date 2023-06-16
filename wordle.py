@@ -81,6 +81,10 @@ light_visible_img = pygame.transform.scale(light_visible_img, (30, 30))
 light_invisible_img = pygame.image.load("images/light-invisible.png").convert_alpha()
 light_invisible_img = pygame.transform.scale(light_invisible_img, (30, 30))
 
+pointer_img = pygame.image.load("images/pointer.png").convert_alpha()
+pointer_img = pygame.transform.scale(pointer_img, (25, 25))
+pointer_img_rect = pointer_img.get_rect()
+
 counter = 0
 
 def set_answer():
@@ -795,7 +799,14 @@ while running:
                 not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, white)
             screen.blit(not_a_word, not_a_word_rect)
             counter -= 2
-        # counter = counter + 2
+
+    if stat_img_rect.collidepoint(pygame.mouse.get_pos()) or settings_img_rect.collidepoint(pygame.mouse.get_pos()) or keyboard_img_rect.collidepoint(pygame.mouse.get_pos()):
+        pointer_img_rect = pygame.mouse.get_pos()
+        pygame.mouse.set_visible(False)
+        screen.blit(pointer_img, pointer_img_rect)
+    else:
+        pygame.mouse.set_visible(True)
+
     
     # Update the display
     pygame.display.flip()
