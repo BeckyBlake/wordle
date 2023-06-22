@@ -840,6 +840,14 @@ while running:
     if game_type == "wordle":
         display_guessed_words()
         display_user_input()
+
+    if most_recent_win_type == -1 and exited_from_play_again == 1:
+        answer_text = pygame.font.Font(None, 50).render(answer, True, white)
+        answer_text_rect = answer_text.get_rect(center=(width/2, 130))
+        black_rectangle = pygame.Rect(width/2, 100, 120, 50)
+        black_rectangle.center = (width/2, 130)
+        pygame.draw.rect(screen, black, black_rectangle, 0, 3)
+        screen.blit(answer_text, answer_text_rect)
     
     # display title at top
     font = pygame.font.Font(None, 50)
