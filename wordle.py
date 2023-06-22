@@ -350,7 +350,7 @@ def create_graph():
     return fig
 
 def display_stats(play_again_flag):
-    global exited_from_play_again, wins, played, max_streak, current_streak, win_type, screen, user_input, current_word, guessed_words, running
+    global exited_from_play_again, wins, played, max_streak, current_streak, win_type, screen, user_input, current_word, guessed_words, running, most_recent_win_type
     if play_again_flag == 1:
         rectangle = pygame.Rect(width/2, height/2 - 20, 400, 430)
         rectangle.center = (width/2, height * 1.1/2 - 20)
@@ -415,6 +415,7 @@ def display_stats(play_again_flag):
                 mouse_pos = event.pos
                 if inner_rectangle.collidepoint(mouse_pos):
                     exited_from_play_again = 0
+                    most_recent_win_type = -2
                     user_input = ""
                     current_word = 0
                     guessed_words.clear()
