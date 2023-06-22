@@ -38,7 +38,8 @@ almost_black = (20, 20, 20)
 
 answer = "xxxxx"
 
-most_recent_win_type = -1
+# starts at -2 and becomes -1 if the user loses and 0-5 if the user wins
+most_recent_win_type = -2
 
 wins = 0
 win_type = [0, 0, 0, 0, 0, 0]
@@ -458,6 +459,15 @@ def display_stats(play_again_flag):
             text = smaller_font.render("Play again?", True, white)
             text_rect = text.get_rect(center=(width/2, height * 4/5 - 45))
             screen.blit(text, text_rect)
+
+        # if most_recent_win_type == -1 and exited_from_play_again == 1:
+        #     text = pygame.font.Font(None, 50).render(answer, True, white)
+        #     text_rect = text.get_rect(center=(width/2, 130))
+        #     rectangle = pygame.Rect(width/2, 100, 120, 50)
+        #     rectangle.center = (width/2, 130)
+        #     pygame.draw.rect(screen, black, rectangle, 0, 3)
+        #     screen.blit(text, text_rect)
+
     
         screen.blit(exit, exit_rect)
         screen.blit(text2, text2_rect)
@@ -633,6 +643,21 @@ def set_up_screen():
     if game_type == "wordle":
         display_guessed_words()
         display_user_input()
+    
+    if (most_recent_win_type == -1):
+        # guessed_words.append(user_input)
+        # current_streak = 0 # :( so sad
+        font = pygame.font.Font(None, 50)
+        text = font.render(answer, True, white)
+        text_rect = text.get_rect(center=(width/2, 130))
+        rectangle = pygame.Rect(width/2, 100, 120, 50)
+        rectangle.center = (width/2, 130)
+        pygame.draw.rect(screen, black, rectangle, 0, 3)
+        screen.blit(text, text_rect)
+        # most_recent_win_type = -1
+        # play_again_request()
+
+
     
     # display title at top
     font = pygame.font.Font(None, 50)
