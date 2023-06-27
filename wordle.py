@@ -114,7 +114,7 @@ def set_up_boxes():
             pygame.draw.rect(screen, gray, box, 2)
 
 def check_word_hard_mode():
-    global user_input, answer, counter, guessed_words
+    global user_input, answer, counter, guessed_words, message
     if len(guessed_words) == 0:
         # it's the first guess, so its aight
         return 1
@@ -124,6 +124,7 @@ def check_word_hard_mode():
         if prev_guess[i] == answer[i]: # so they had a green in this spot in the prev guess
             if user_input[i] != answer[i]:
                 counter = 3
+                message = "hard mode"
                 # does not obey hard mode
                 return 3
         else: # so they didn't have a green in this spot in the prev guess
@@ -137,6 +138,7 @@ def check_word_hard_mode():
                             break
                     if we_good == 0:
                         # does not obey hard mode
+                        message = "hard mode"
                         counter = 3
                         return 3
     # it obeys hard mode
@@ -148,8 +150,9 @@ def check_word_hard_mode():
 # returning 2 means word is found and game is over
 # returning 3 means word doesn't obey hard mode
 def check_word():
-    global user_input, answer, counter, hard_mode_switch
+    global user_input, answer, counter, hard_mode_switch, message
     if len(user_input) < 5:
+        message = "too short"
         counter = 2
         return -1
     elif user_input == answer:
@@ -163,6 +166,7 @@ def check_word():
                         return check_word_hard_mode()
                     else:
                         return 1
+        message = "not in wordlist"
         counter = 1
         return 0
 
@@ -756,6 +760,8 @@ too_few_letters_rect = too_few_letters.get_rect(center=(width/2, 110))
 hard_mode_not_obeyed = pygame.font.Font(None, 30).render("Does not obey hard mode", True, black)
 hard_mode_not_obeyed_rect = hard_mode_not_obeyed.get_rect(center=(width/2, 110))
 
+message = ""
+
 visibility_top_rect = visible_img.get_rect(center=(40, 290))
 visibility_middle_rect = visible_img.get_rect(center=(40, 345))
 visibility_bottom_rect = visible_img.get_rect(center=(40, 400))
@@ -936,26 +942,26 @@ while running:
                 backspace_key.draw(screen)
                 screen.blit(back_img, back_img_rect)
 
-    if counter > 512 or counter < -256:
+    if counter > 130:
+        message = ""
         counter = 0
 
-
     if counter != 0:
-        if counter % 2 == 0 and len(user_input) != 5 and counter > 0:
+        if message == "too short":
             if dark_mode_switch.get_state() == 1:
                 too_few_letters = pygame.font.Font(None, 30).render("Not enough letters", True, white)
             screen.blit(too_few_letters, too_few_letters_rect)
-            counter += 2
-        elif counter % 3 == 0 and counter > 0:
+            counter += 1
+        elif message == "hard mode":
             if dark_mode_switch.get_state() == 1:
                 hard_mode_not_obeyed = pygame.font.Font(None, 30).render("Does not obey hard mode", True, white)
             screen.blit(hard_mode_not_obeyed, hard_mode_not_obeyed_rect)
-            counter += 3
+            counter += 1
         else:
             if dark_mode_switch.get_state() == 1:
                 not_a_word = pygame.font.Font(None, 30).render("Not in word list", True, white)
             screen.blit(not_a_word, not_a_word_rect)
-            counter -= 2
+            counter += 1
 
     if stat_img_rect.collidepoint(pygame.mouse.get_pos()) or settings_img_rect.collidepoint(pygame.mouse.get_pos()) or keyboard_img_rect.collidepoint(pygame.mouse.get_pos()):
         pointer_img_rect = pygame.mouse.get_pos()
