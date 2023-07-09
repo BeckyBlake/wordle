@@ -316,8 +316,9 @@ def create_graph():
     plt.rcdefaults()
     fig, ax = plt.subplots()
 
-    number_labels = ('1', '2', '3', '4', '5', '6')
-    bars = ax.barh(number_labels, win_type, align='center', color='gray')
+    # number_labels = ('1', '2', '3', '4', '5', '6')
+    number_labels = ('6', '5', '4', '3', '2', '1')
+    bars = ax.barh(number_labels, win_type[::-1], align='center', color='gray')
 
     # Set a small height for bars with a value of 0
     small_height = max(max(win_type) * 0.05, 0.1)
@@ -327,13 +328,13 @@ def create_graph():
 
     # Add the values as text annotations inside the bars
     for i, bar in enumerate(bars):
-        value = win_type[i]
+        value = win_type[5-i]
         if value == 0 or bar.get_width() < small_height:
             bar.set_width(small_height)
         ax.annotate(str(value), xy=(bar.get_width() / 2 - 0.025, bar.get_y() + bar.get_height() / 2),
                 xytext=(0, 0), textcoords='offset points', ha='left', va='center', fontsize=20, color='white')
-        if i == most_recent_win_type:
-            bar.set_color((50/256, 168/256, 82/256))
+        if 5-i == most_recent_win_type:
+            bar.set_color((50/256, 168/256, 82/256)) # green
             # (50, 168, 82)
 
         label = number_labels[i]
